@@ -10,6 +10,8 @@
         android:id="@+id/list_item_event_title_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:padding="4dp"
         tools:text="Event Title"
         />
 
@@ -17,6 +19,8 @@
         android:id="@+id/list_item_event_date_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/list_item_event_title_text_view"
+        android:padding="4dp"
         tools:text="Event Date"
         />
 
