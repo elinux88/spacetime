@@ -10,13 +10,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import java.util.UUID;
+
 /**
  * Created by eli on 2/29/16.
  */
 public class EventFragment extends Fragment {
 
+    private static final String ARG_EVENT_ID = "event_id";
+
     private Event mEvent;
     private EditText mTitleField;
+
+    public static EventFragment newInstance(UUID eventId) {
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_EVENT_ID, eventId);
+
+        EventFragment fragment = new EventFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

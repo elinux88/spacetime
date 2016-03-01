@@ -1,5 +1,6 @@
 package site.elioplasma.ecook.spacetimeeventreminder;
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -46,14 +47,33 @@ public class MainActivityFragment extends Fragment {
         mEventRecyclerView.setAdapter(mAdapter);
     }
 
-    private class EventHolder extends RecyclerView.ViewHolder {
+    private class EventHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        public TextView mTitleTextView;
+        private Event mEvent;
+
+        private TextView mTitleTextView;
+        private TextView mDateTextView;
 
         public EventHolder(View itemView) {
             super(itemView);
+            itemView.setOnClickListener(this);
 
-            mTitleTextView = (TextView) itemView;
+            mTitleTextView = (TextView)
+                    itemView.findViewById(R.id.list_item_event_title_text_view);
+            mDateTextView = (TextView)
+                    itemView.findViewById(R.id.list_item_event_date_text_view);
+        }
+
+        public void bindEvent(Event event) {
+            mEvent = event;
+            mTitleTextView.setText(mEvent.getTitle());
+            mDateTextView.setText(mEvent.getDate().toString());
+        }
+
+        @Override
+        public void onClick(View v) {
+            Intent intent = EventActivity.newIntent(getActivity(), mEvent.getId());
+            startActivity(intent);
         }
     }
 
@@ -69,14 +89,14 @@ public class MainActivityFragment extends Fragment {
         public EventHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
             View view = layoutInflater
-                    .inflate(android.R.layout.simple_list_item_1, parent, false);
+                    .inflate(R.layout.list_item_event, parent, false);
             return new EventHolder(view);
         }
 
         @Override
         public void onBindViewHolder(EventHolder holder, int position) {
             Event event = mEvents.get(position);
-            holder.mTitleTextView.setText(event.getTitle());
+            holder.bindEvent(event);
         }
 
         @Override
