@@ -11,6 +11,7 @@ public class Event {
     private UUID mId;
     private String mTitle;
     private Date mDate;
+    private String mDescription;
 
     public Event() {
         mId = UUID.randomUUID();
@@ -35,5 +36,13 @@ public class Event {
 
     public void setDate(Date date) {
         mDate = date;
+    }
+
+    public String getDescription() {
+        return mDescription;
+    }
+
+    public void setDescription(String description) {
+        mDescription = description;
     }
 }

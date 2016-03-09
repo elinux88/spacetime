@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -104,7 +105,8 @@ public class MainActivityFragment extends Fragment {
         public void bindEvent(Event event) {
             mEvent = event;
             mTitleTextView.setText(mEvent.getTitle());
-            mDateTextView.setText(mEvent.getDate().toString());
+            SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+            mDateTextView.setText(sdf.format(mEvent.getDate()));
         }
 
         @Override

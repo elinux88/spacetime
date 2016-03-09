@@ -3,6 +3,8 @@ package site.elioplasma.ecook.spacetimeeventreminder;
 import android.content.Context;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,10 +25,33 @@ public class EventData {
 
     private EventData(Context context) {
         mEvents = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
+        String[] eventNames = {
+                "Total Solar Eclipse",
+                "Penumbra Lunar Eclipse",
+                "Lyrid Meteor Shower",
+                "Mars closest to Earth",
+                "Ophiuchid Meteor Shower",
+        };
+        Date[] eventDates = {
+                new GregorianCalendar(2016, 3, 9).getTime(),
+                new GregorianCalendar(2016, 3, 23).getTime(),
+                new GregorianCalendar(2016, 4, 23).getTime(),
+                new GregorianCalendar(2016, 5, 30).getTime(),
+                new GregorianCalendar(2016, 6, 20).getTime(),
+        };
+        String[] eventDescriptions = {
+                "Visible in Northern Pacific, Southern Asia, Northern Australia",
+                "...",
+                "...",
+                "...",
+                "...",
+        };
+        for (int i = 0; i < eventNames.length; i++) {
             Event event = new Event();
-            event.setTitle("Event #" + i);
-            mEvents.add(event);
+            event.setTitle(eventNames[i]);
+            event.setDate(eventDates[i]);
+            event.setDescription(eventDescriptions[i]);
+            addEvent(event);
         }
     }
 

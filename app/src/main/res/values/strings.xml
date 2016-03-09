@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">SpaceTime Event Reminder</string>
+    <string name="upcoming_events_name">Upcoming Events</string>
+    <string name="event_details_name">Event Details</string>
     <string name="action_settings">Settings</string>
     <string name="event_title_hint">Enter a title for the event.</string>
     <string name="new_event">New Event</string>
+    <string name="edit_event">Edit Event</string>
 </resources>
