@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -22,7 +25,10 @@ public class MainActivityFragment extends Fragment {
     private RecyclerView mEventRecyclerView;
     private EventAdapter mAdapter;
 
-    public MainActivityFragment() {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -39,12 +45,43 @@ public class MainActivityFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateUI();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_event_list, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_new_event:
+                Event event = new Event();
+                EventData.get(getActivity()).addEvent(event);
+                Intent intent = EventActivity
+                        .newIntent(getActivity(), event.getId());
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     private void updateUI() {
         EventData eventData = EventData.get(getActivity());
         List<Event> events = eventData.getEvents();
 
-        mAdapter = new EventAdapter(events);
-        mEventRecyclerView.setAdapter(mAdapter);
+        if (mAdapter == null) {
+            mAdapter = new EventAdapter(events);
+            mEventRecyclerView.setAdapter(mAdapter);
+        } else {
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     private class EventHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

@@ -30,6 +30,10 @@ public class EventData {
         }
     }
 
+    public void addEvent(Event e) {
+        mEvents.add(e);
+    }
+
     public List<Event> getEvents() {
         return mEvents;
     }

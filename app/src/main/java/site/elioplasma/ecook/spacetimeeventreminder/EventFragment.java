@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import java.util.UUID;
 
@@ -20,7 +21,7 @@ public class EventFragment extends Fragment {
     private static final String ARG_EVENT_ID = "event_id";
 
     private Event mEvent;
-    private EditText mTitleField;
+    private TextView mTitleField;
 
     public static EventFragment newInstance(UUID eventId) {
         Bundle args = new Bundle();
@@ -42,8 +43,10 @@ public class EventFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_event, container, false);
 
-        mTitleField = (EditText)v.findViewById(R.id.event_title);
+        mTitleField = (TextView)v.findViewById(R.id.event_title);
         mTitleField.setText(mEvent.getTitle());
+
+        /*
         mTitleField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -60,6 +63,7 @@ public class EventFragment extends Fragment {
                 // not used
             }
         });
+        */
         return v;
     }
 }
