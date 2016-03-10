@@ -1,5 +1,6 @@
 package site.elioplasma.ecook.spacetimeeventreminder;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -19,7 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
- * A placeholder fragment containing a simple view.
+ * A fragment containing a RecyclerView.
  */
 public class MainActivityFragment extends Fragment {
 

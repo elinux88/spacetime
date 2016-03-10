@@ -1,5 +1,7 @@
 package site.elioplasma.ecook.spacetimeeventreminder;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -29,6 +31,10 @@ public class EventFragment extends Fragment {
     private TextView mDateTextView;
     private TextView mDescriptionTextView;
     private TextView mReminderTextView;
+
+    public static Intent newIntent(Context context) {
+        return new Intent(context, EventFragment.class);
+    }
 
     public static EventFragment newInstance(UUID eventId) {
         Bundle args = new Bundle();
@@ -94,6 +100,13 @@ public class EventFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_event, menu);
+
+        MenuItem toggleItem = menu.findItem(R.id.menu_item_toggle_polling);
+        if (PollService.isServiceAlarmOn(getActivity())) {
+            toggleItem.setTitle(R.string.stop_polling);
+        } else {
+            toggleItem.setTitle(R.string.start_polling);
+        }
     }
 
     @Override
@@ -102,6 +115,11 @@ public class EventFragment extends Fragment {
             case R.id.menu_item_edit_event:
                 //mTitleTextView.setKeyListener((KeyListener) mTitleTextView.getTag());
                 //mTitleTextView.setCursorVisible(true);
+                return true;
+            case R.id.menu_item_toggle_polling:
+                boolean shouldStartAlarm = !PollService.isServiceAlarmOn(getActivity());
+                PollService.setServiceAlarm(getActivity(), shouldStartAlarm);
+                getActivity().invalidateOptionsMenu();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
