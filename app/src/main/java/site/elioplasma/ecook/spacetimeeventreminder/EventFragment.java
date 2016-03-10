@@ -1,6 +1,5 @@
 package site.elioplasma.ecook.spacetimeeventreminder;
 
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,7 +12,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -27,9 +25,10 @@ public class EventFragment extends Fragment {
     private static final String ARG_EVENT_ID = "event_id";
 
     private Event mEvent;
-    private EditText mTitleField;
+    private TextView mTitleTextView;
     private TextView mDateTextView;
     private TextView mDescriptionTextView;
+    private TextView mReminderTextView;
 
     public static EventFragment newInstance(UUID eventId) {
         Bundle args = new Bundle();
@@ -55,9 +54,10 @@ public class EventFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_event, container, false);
 
-        mTitleField = (EditText)v.findViewById(R.id.event_title);
-        mTitleField.setText(mEvent.getTitle());
-        mTitleField.addTextChangedListener(new TextWatcher() {
+        mTitleTextView = (TextView)v.findViewById(R.id.event_detail_title);
+        mTitleTextView.setText(mEvent.getTitle());
+        /*
+        mTitleTextView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 // not used
@@ -73,15 +73,19 @@ public class EventFragment extends Fragment {
                 // not used
             }
         });
-        mTitleField.setTag(mTitleField.getKeyListener());
-        mTitleField.setKeyListener(null);
+        mTitleTextView.setTag(mTitleTextView.getKeyListener());
+        mTitleTextView.setKeyListener(null);
+        */
 
-        mDateTextView = (TextView)v.findViewById(R.id.event_date);
+        mDateTextView = (TextView)v.findViewById(R.id.event_detail_date);
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
         mDateTextView.setText(sdf.format(mEvent.getDate()));
 
-        mDescriptionTextView = (TextView)v.findViewById(R.id.event_description);
+        mDescriptionTextView = (TextView)v.findViewById(R.id.event_detail_description);
         mDescriptionTextView.setText(mEvent.getDescription());
+
+        mReminderTextView = (TextView)v.findViewById(R.id.event_detail_reminder);
+        mReminderTextView.setText("... before");
 
         return v;
     }
@@ -96,8 +100,8 @@ public class EventFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.menu_item_edit_event:
-                mTitleField.setKeyListener((KeyListener) mTitleField.getTag());
-                mTitleField.setCursorVisible(true);
+                //mTitleTextView.setKeyListener((KeyListener) mTitleTextView.getTag());
+                //mTitleTextView.setCursorVisible(true);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

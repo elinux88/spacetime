@@ -6,4 +6,5 @@
     <string name="event_title_hint">Enter a title for the event.</string>
     <string name="new_event">New Event</string>
     <string name="edit_event">Edit Event</string>
+    <string name="event_reminder_label">Reminder set for:</string>
 </resources>

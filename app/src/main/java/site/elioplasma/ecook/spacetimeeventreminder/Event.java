@@ -12,6 +12,7 @@ public class Event {
     private String mTitle;
     private Date mDate;
     private String mDescription;
+    private Reminder mReminder;
 
     public Event() {
         mId = UUID.randomUUID();
@@ -44,5 +45,13 @@ public class Event {
 
     public void setDescription(String description) {
         mDescription = description;
+    }
+
+    public Reminder getReminder() {
+        return mReminder;
+    }
+
+    public void setReminder(Reminder reminder) {
+        mReminder = reminder;
     }
 }

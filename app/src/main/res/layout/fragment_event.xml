@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,8 +9,50 @@
     >
 
     <LinearLayout
+        android:id="@+id/event_detail_top_box"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:elevation="4dp"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        >
+
+        <TextView
+            android:id="@+id/event_detail_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:textSize="24sp"
+            tools:text="Astronomical Event"
+            />
+
+        <TextView
+            android:id="@+id/event_detail_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:textSize="24sp"
+            tools:text="1 Jan 1970"
+            />
+
+        <TextView
+            android:id="@+id/event_detail_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="Event description should go here"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/event_detail_bottom_box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/event_detail_top_box"
         android:background="@color/colorPrimary"
         android:elevation="2dp"
         android:orientation="vertical"
@@ -20,31 +62,25 @@
         android:paddingTop="@dimen/activity_vertical_margin"
         >
 
-        <EditText
-            android:id="@+id/event_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:hint="@string/event_title_hint"
+        <TextView
+            android:id="@+id/event_detail_reminder_label"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:text="@string/event_reminder_label"
             android:textSize="24sp"
             />
 
         <TextView
-            android:id="@+id/event_date"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:id="@+id/event_detail_reminder"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:textSize="24sp"
-            tools:text="Event date"
-            />
-
-        <TextView
-            android:id="@+id/event_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:text="Event description"
+            tools:text="0 days before"
             />
 
     </LinearLayout>
 
-</FrameLayout>
+</RelativeLayout>
