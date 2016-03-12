@@ -71,14 +71,37 @@
             android:textSize="24sp"
             />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/activity_horizontal_margin"
+            >
+
+            <Spinner
+                android:id="@+id/event_detail_time_amount_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                />
+
+            <Spinner
+                android:id="@+id/event_detail_time_type_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                />
+
+        </LinearLayout>
+
         <TextView
             android:id="@+id/event_detail_reminder"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:text="@string/event_reminder_label_post"
             android:textSize="24sp"
-            tools:text="0 days before"
             />
 
     </LinearLayout>

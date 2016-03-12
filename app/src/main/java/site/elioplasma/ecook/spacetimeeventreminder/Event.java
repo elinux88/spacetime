@@ -17,6 +17,7 @@ public class Event {
     public Event() {
         mId = UUID.randomUUID();
         mDate = new Date();
+        mReminder = new Reminder();
     }
 
     public UUID getId() {

@@ -12,8 +12,8 @@
         />
 
     <item
-        android:id="@+id/menu_item_toggle_polling"
-        android:title="@string/start_polling"
+        android:id="@+id/menu_item_toggle_reminder"
+        android:title="@string/start_reminder"
         app:showAsAction="ifRoom"
         />
 

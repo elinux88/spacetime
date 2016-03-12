@@ -1,6 +1,5 @@
 package site.elioplasma.ecook.spacetimeeventreminder;
 
-import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -9,22 +8,30 @@ import java.util.UUID;
 public class Reminder {
 
     private UUID mId;
-    private Date mDate;
+    private int mAmount;
+    private int mType;
 
     public Reminder() {
         mId = UUID.randomUUID();
-        mDate = new Date();
     }
 
     public UUID getId() {
         return mId;
     }
 
-    public Date getDate() {
-        return mDate;
+    public int getAmount() {
+        return mAmount;
     }
 
-    public void setDate(Date date) {
-        mDate = date;
+    public void setAmount(int amount) {
+        mAmount = amount;
+    }
+
+    public int getType() {
+        return mType;
+    }
+
+    public void setType(int type) {
+        mType = type;
     }
 }

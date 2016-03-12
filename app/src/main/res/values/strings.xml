@@ -7,8 +7,19 @@
     <string name="new_event">New Event</string>
     <string name="edit_event">Edit Event</string>
     <string name="event_reminder_label">Reminder set for:</string>
-    <string name="start_polling">Start polling</string>
-    <string name="stop_polling">Stop polling</string>
+    <string name="event_reminder_label_post">before</string>
+    <string name="start_reminder">Start reminder</string>
+    <string name="stop_reminder">Stop reminder</string>
     <string name="event_reminder_title">Event Reminder</string>
     <string name="event_reminder_text">An event will happen soon.</string>
+    <string-array name="time_amount_array">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="time_type_array">
+        <item>Minute(s)</item>
+        <item>Hour(s)</item>
+        <item>Day(s)</item>
+    </string-array>
 </resources>
