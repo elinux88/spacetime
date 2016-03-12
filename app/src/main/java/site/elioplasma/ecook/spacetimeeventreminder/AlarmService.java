@@ -7,33 +7,34 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.os.SystemClock;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.NotificationCompat;
+
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by eli on 3/10/16.
  */
-public class PollService extends IntentService {
+public class AlarmService extends IntentService {
 
-    private static final String TAG = "PollService";
-
-    private static final int POLL_INTERVAL = 1000 * 60; // 60 seconds
+    private static final String TAG = "AlarmService";
 
     public static Intent newIntent(Context context) {
-        return new Intent(context, PollService.class);
+        return new Intent(context, AlarmService.class);
     }
 
-    public static void setServiceAlarm(Context context, boolean isOn) {
-        Intent i = PollService.newIntent(context);
+    public static void setServiceAlarm(Context context, boolean isOn, Date date) {
+        Intent i = AlarmService.newIntent(context);
         PendingIntent pi = PendingIntent.getService(context, 0, i, 0);
 
         AlarmManager alarmManager = (AlarmManager)
                 context.getSystemService(Context.ALARM_SERVICE);
 
         if (isOn) {
-            alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
-                    SystemClock.elapsedRealtime(), POLL_INTERVAL, pi);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pi);
         } else {
             alarmManager.cancel(pi);
             pi.cancel();
@@ -41,13 +42,13 @@ public class PollService extends IntentService {
     }
 
     public static boolean isServiceAlarmOn(Context context) {
-        Intent i = PollService.newIntent(context);
+        Intent i = AlarmService.newIntent(context);
         PendingIntent pi = PendingIntent
                 .getService(context, 0, i, PendingIntent.FLAG_NO_CREATE);
         return pi != null;
     }
 
-    public PollService() {
+    public AlarmService() {
         super(TAG);
     }
 

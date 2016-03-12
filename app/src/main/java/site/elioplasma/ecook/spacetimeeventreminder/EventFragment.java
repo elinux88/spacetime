@@ -17,6 +17,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -72,8 +75,14 @@ public class EventFragment extends Fragment {
         mDescriptionTextView.setText(mEvent.getDescription());
 
         mTimeAmountSpinner = (Spinner)v.findViewById(R.id.event_detail_time_amount_spinner);
-        ArrayAdapter<CharSequence> amountAdapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.time_amount_array, android.R.layout.simple_spinner_item);
+        List<String> amounts = new ArrayList<String>();
+        for (int i = 0; i < 60; i++) {
+            amounts.add(Integer.toString(i));
+        }
+        ArrayAdapter<String> amountAdapter = new ArrayAdapter<String>(getActivity(),
+                android.R.layout.simple_spinner_item, amounts);
+        //ArrayAdapter<CharSequence> amountAdapter = ArrayAdapter.createFromResource(getActivity(),
+        //        intArray, android.R.layout.simple_spinner_item);
         amountAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mTimeAmountSpinner.setAdapter(amountAdapter);
 
@@ -127,7 +136,7 @@ public class EventFragment extends Fragment {
         inflater.inflate(R.menu.fragment_event, menu);
 
         MenuItem toggleItem = menu.findItem(R.id.menu_item_toggle_reminder);
-        if (PollService.isServiceAlarmOn(getActivity())) {
+        if (AlarmService.isServiceAlarmOn(getActivity())) {
             toggleItem.setTitle(R.string.stop_reminder);
         } else {
             toggleItem.setTitle(R.string.start_reminder);
@@ -142,8 +151,9 @@ public class EventFragment extends Fragment {
                 //mTitleTextView.setCursorVisible(true);
                 return true;
             case R.id.menu_item_toggle_reminder:
-                boolean shouldStartAlarm = !PollService.isServiceAlarmOn(getActivity());
-                PollService.setServiceAlarm(getActivity(), shouldStartAlarm);
+                boolean shouldStartAlarm = !AlarmService.isServiceAlarmOn(getActivity());
+                Date date = mEvent.getReminderDate();
+                AlarmService.setServiceAlarm(getActivity(), shouldStartAlarm, date);
                 getActivity().invalidateOptionsMenu();
                 return true;
             default:

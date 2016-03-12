@@ -25,7 +25,7 @@
             android:parentActivityName=".MainActivity"
             >
         </activity>
-        <service android:name=".PollService" />
+        <service android:name=".AlarmService" />
     </application>
 
 </manifest>

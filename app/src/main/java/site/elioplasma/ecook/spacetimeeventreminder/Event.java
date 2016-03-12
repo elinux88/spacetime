@@ -20,6 +20,12 @@ public class Event {
         mReminder = new Reminder();
     }
 
+    public Date getReminderDate() {
+        long millis = mReminder.getAmountInMillis();
+        Date reminderDate = new Date(mDate.getTime() - millis);
+        return reminderDate;
+    }
+
     public UUID getId() {
         return mId;
     }
