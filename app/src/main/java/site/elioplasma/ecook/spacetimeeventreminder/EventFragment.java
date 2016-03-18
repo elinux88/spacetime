@@ -1,10 +1,14 @@
 package site.elioplasma.ecook.spacetimeeventreminder;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -31,6 +34,9 @@ import java.util.UUID;
 public class EventFragment extends Fragment {
 
     private static final String ARG_EVENT_ID = "event_id";
+    private static final String DIALOG_DATE = "DialogDate";
+
+    private static final int REQUEST_DATE = 0;
 
     private Event mEvent;
     private TextView mTitleTextView;
@@ -38,7 +44,6 @@ public class EventFragment extends Fragment {
     private TextView mDescriptionTextView;
     private EditText mTitleEditText;
     private Button mDateButton;
-    private DatePicker mDatePicker;
     private EditText mDescriptionEditText;
     private Spinner mTimeAmountSpinner;
     private Spinner mTimeTypeSpinner;
@@ -79,25 +84,67 @@ public class EventFragment extends Fragment {
         if (mEvent.isCustom()) {
             mTitleEditText = (EditText) v.findViewById(R.id.event_detail_custom_title);
             mTitleEditText.setText(mEvent.getTitle());
+            mTitleEditText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    // not used
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    mEvent.setTitle(mTitleEditText.getText().toString());
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    // not used
+                }
+            });
         } else {
             mTitleTextView = (TextView) v.findViewById(R.id.event_detail_title);
             mTitleTextView.setText(mEvent.getTitle());
         }
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+
 
         if (mEvent.isCustom()) {
             mDateButton = (Button) v.findViewById(R.id.event_detail_custom_date_button);
-            mDateButton.setText(sdf.format(mEvent.getDate()));
-            //mDatePicker = (DatePicker) v.findViewById(R.id.event_detail_custom_date);
+            updateDate();
+            mDateButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    FragmentManager manager = getFragmentManager();
+                    DatePickerFragment dialog = DatePickerFragment
+                            .newInstance(mEvent.getDate());
+                    dialog.setTargetFragment(EventFragment.this, REQUEST_DATE);
+                    dialog.show(manager, DIALOG_DATE);
+                }
+            });
         } else {
             mDateTextView = (TextView) v.findViewById(R.id.event_detail_date);
+            SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
             mDateTextView.setText(sdf.format(mEvent.getDate()));
         }
 
         if (mEvent.isCustom()) {
             mDescriptionEditText = (EditText) v.findViewById(R.id.event_detail_custom_description);
             mDescriptionEditText.setText(mEvent.getDescription());
+            mDescriptionEditText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    // not used
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    mEvent.setDescription(mDescriptionEditText.getText().toString());
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    // not used
+                }
+            });
         } else {
             mDescriptionTextView = (TextView) v.findViewById(R.id.event_detail_description);
             mDescriptionTextView.setText(mEvent.getDescription());
@@ -174,9 +221,11 @@ public class EventFragment extends Fragment {
 
         MenuItem toggleItem = menu.findItem(R.id.menu_item_toggle_reminder);
         if (AlarmService.isServiceAlarmOn(getActivity())) {
-            toggleItem.setTitle(R.string.reminder_off);
+            toggleItem.setTitle(R.string.disable_reminder);
+            mEvent.setReminderOn(true);
         } else {
-            toggleItem.setTitle(R.string.reminder_on);
+            toggleItem.setTitle(R.string.enable_reminder);
+            mEvent.setReminderOn(false);
         }
 
         if (!mEvent.isCustom()) {
@@ -194,8 +243,36 @@ public class EventFragment extends Fragment {
                 AlarmService.setServiceAlarm(getActivity(), shouldStartAlarm, date);
                 getActivity().invalidateOptionsMenu();
                 return true;
+            case R.id.menu_item_delete_event:
+                if (mEvent.isCustom()) {
+                    if (EventData.get(getActivity()).deleteEvent(mEvent.getId())) {
+                        getActivity().finish();
+                    } else {
+                        return false;
+                    }
+                }
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        if (requestCode == REQUEST_DATE) {
+            Date date = (Date) data
+                    .getSerializableExtra(DatePickerFragment.EXTRA_DATE);
+            mEvent.setDate(date);
+            updateDate();
+        }
+    }
+
+    private void updateDate() {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+        mDateButton.setText(sdf.format(mEvent.getDate()));
     }
 }

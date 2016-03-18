@@ -62,6 +62,16 @@ public class EventData {
         mEvents.add(e);
     }
 
+    public boolean deleteEvent(UUID id) {
+        for (Event event : mEvents) {
+            if (event.getId().equals(id)) {
+                mEvents.remove(event);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public List<Event> getEvents() {
         return mEvents;
     }

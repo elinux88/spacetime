@@ -93,6 +93,7 @@ public class MainActivityFragment extends Fragment {
 
         private TextView mTitleTextView;
         private TextView mDateTextView;
+        private TextView mReminderOnTextView;
 
         public EventHolder(View itemView) {
             super(itemView);
@@ -102,6 +103,8 @@ public class MainActivityFragment extends Fragment {
                     itemView.findViewById(R.id.list_item_event_title_text_view);
             mDateTextView = (TextView)
                     itemView.findViewById(R.id.list_item_event_date_text_view);
+            mReminderOnTextView = (TextView)
+                    itemView.findViewById(R.id.list_item_event_reminder_on_text_view);
         }
 
         public void bindEvent(Event event) {
@@ -109,6 +112,11 @@ public class MainActivityFragment extends Fragment {
             mTitleTextView.setText(mEvent.getTitle());
             SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
             mDateTextView.setText(sdf.format(mEvent.getDate()));
+            if (mEvent.isReminderOn()) {
+                mReminderOnTextView.setVisibility(View.VISIBLE);
+            } else {
+                mReminderOnTextView.setVisibility(View.INVISIBLE);
+            }
         }
 
         @Override

@@ -14,6 +14,7 @@ public class Event {
     private Date mDate;
     private String mDescription;
     private Reminder mReminder;
+    private boolean mReminderOn;
 
     public Event() {
         mId = UUID.randomUUID();
@@ -70,5 +71,13 @@ public class Event {
 
     public void setReminder(Reminder reminder) {
         mReminder = reminder;
+    }
+
+    public boolean isReminderOn() {
+        return mReminderOn;
+    }
+
+    public void setReminderOn(boolean reminderOn) {
+        mReminderOn = reminderOn;
     }
 }
