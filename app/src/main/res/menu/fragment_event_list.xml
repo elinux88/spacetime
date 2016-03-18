@@ -7,7 +7,7 @@
     <item
         android:id="@+id/menu_item_new_event"
         android:icon="@drawable/ic_menu_add"
-        android:title="@string/new_event"
+        android:title="@string/new_custom_event"
         app:showAsAction="ifRoom|withText"
         />
 

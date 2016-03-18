@@ -31,6 +31,7 @@ public class EventData {
                 "Lyrid Meteor Shower",
                 "Mars closest to Earth",
                 "Ophiuchid Meteor Shower",
+                "Test Event",
         };
         Date[] eventDates = {
                 new GregorianCalendar(2016, 3, 9).getTime(),
@@ -38,6 +39,7 @@ public class EventData {
                 new GregorianCalendar(2016, 4, 23).getTime(),
                 new GregorianCalendar(2016, 5, 30).getTime(),
                 new GregorianCalendar(2016, 6, 20).getTime(),
+                new GregorianCalendar(2016, 3, 18, 20, 0, 0).getTime(),
         };
         String[] eventDescriptions = {
                 "Visible in Northern Pacific, Southern Asia, Northern Australia",
@@ -45,6 +47,7 @@ public class EventData {
                 "...",
                 "...",
                 "...",
+                "Test description",
         };
         for (int i = 0; i < eventNames.length; i++) {
             Event event = new Event();

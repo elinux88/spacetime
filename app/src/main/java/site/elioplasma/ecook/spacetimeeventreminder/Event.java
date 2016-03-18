@@ -9,6 +9,7 @@ import java.util.UUID;
 public class Event {
 
     private UUID mId;
+    private boolean mCustom;
     private String mTitle;
     private Date mDate;
     private String mDescription;
@@ -16,6 +17,7 @@ public class Event {
 
     public Event() {
         mId = UUID.randomUUID();
+        mCustom = false;
         mDate = new Date();
         mReminder = new Reminder();
     }
@@ -28,6 +30,14 @@ public class Event {
 
     public UUID getId() {
         return mId;
+    }
+
+    public boolean isCustom() {
+        return mCustom;
+    }
+
+    public void setCustom(boolean custom) {
+        mCustom = custom;
     }
 
     public String getTitle() {

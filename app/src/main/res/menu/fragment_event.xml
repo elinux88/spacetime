@@ -5,15 +5,15 @@
     >
 
     <item
-        android:id="@+id/menu_item_edit_event"
-        android:icon="@drawable/ic_menu_edit"
-        android:title="@string/edit_event"
-        app:showAsAction="ifRoom|withText"
+        android:id="@+id/menu_item_toggle_reminder"
+        android:title="@string/reminder_on"
+        app:showAsAction="ifRoom"
         />
 
     <item
-        android:id="@+id/menu_item_toggle_reminder"
-        android:title="@string/start_reminder"
+        android:id="@+id/menu_item_delete_event"
+        android:icon="@drawable/ic_menu_delete"
+        android:title="@string/delete_event"
         app:showAsAction="ifRoom"
         />
 

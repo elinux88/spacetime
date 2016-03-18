@@ -64,6 +64,7 @@ public class MainActivityFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.menu_item_new_event:
                 Event event = new Event();
+                event.setCustom(true);
                 EventData.get(getActivity()).addEvent(event);
                 Intent intent = EventActivity
                         .newIntent(getActivity(), event.getId());

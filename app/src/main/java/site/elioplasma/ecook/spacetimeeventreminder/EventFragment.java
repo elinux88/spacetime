@@ -13,6 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -33,6 +36,10 @@ public class EventFragment extends Fragment {
     private TextView mTitleTextView;
     private TextView mDateTextView;
     private TextView mDescriptionTextView;
+    private EditText mTitleEditText;
+    private Button mDateButton;
+    private DatePicker mDatePicker;
+    private EditText mDescriptionEditText;
     private Spinner mTimeAmountSpinner;
     private Spinner mTimeTypeSpinner;
 
@@ -62,19 +69,45 @@ public class EventFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_event, container, false);
+        View v;
+        if (mEvent.isCustom()) {
+            v = inflater.inflate(R.layout.fragment_event_custom, container, false);
+        } else {
+            v = inflater.inflate(R.layout.fragment_event, container, false);
+        }
 
-        mTitleTextView = (TextView)v.findViewById(R.id.event_detail_title);
-        mTitleTextView.setText(mEvent.getTitle());
+        if (mEvent.isCustom()) {
+            mTitleEditText = (EditText) v.findViewById(R.id.event_detail_custom_title);
+            mTitleEditText.setText(mEvent.getTitle());
+        } else {
+            mTitleTextView = (TextView) v.findViewById(R.id.event_detail_title);
+            mTitleTextView.setText(mEvent.getTitle());
+        }
 
-        mDateTextView = (TextView)v.findViewById(R.id.event_detail_date);
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
-        mDateTextView.setText(sdf.format(mEvent.getDate()));
 
-        mDescriptionTextView = (TextView)v.findViewById(R.id.event_detail_description);
-        mDescriptionTextView.setText(mEvent.getDescription());
+        if (mEvent.isCustom()) {
+            mDateButton = (Button) v.findViewById(R.id.event_detail_custom_date_button);
+            mDateButton.setText(sdf.format(mEvent.getDate()));
+            //mDatePicker = (DatePicker) v.findViewById(R.id.event_detail_custom_date);
+        } else {
+            mDateTextView = (TextView) v.findViewById(R.id.event_detail_date);
+            mDateTextView.setText(sdf.format(mEvent.getDate()));
+        }
 
-        mTimeAmountSpinner = (Spinner)v.findViewById(R.id.event_detail_time_amount_spinner);
+        if (mEvent.isCustom()) {
+            mDescriptionEditText = (EditText) v.findViewById(R.id.event_detail_custom_description);
+            mDescriptionEditText.setText(mEvent.getDescription());
+        } else {
+            mDescriptionTextView = (TextView) v.findViewById(R.id.event_detail_description);
+            mDescriptionTextView.setText(mEvent.getDescription());
+        }
+
+        if (mEvent.isCustom()) {
+            mTimeAmountSpinner = (Spinner) v.findViewById(R.id.event_detail_custom_time_amount_spinner);
+        } else {
+            mTimeAmountSpinner = (Spinner) v.findViewById(R.id.event_detail_time_amount_spinner);
+        }
         List<String> amounts = new ArrayList<String>();
         for (int i = 0; i < 60; i++) {
             amounts.add(Integer.toString(i));
@@ -105,7 +138,11 @@ public class EventFragment extends Fragment {
             }
         });
 
-        mTimeTypeSpinner = (Spinner)v.findViewById(R.id.event_detail_time_type_spinner);
+        if (mEvent.isCustom()) {
+            mTimeTypeSpinner = (Spinner) v.findViewById(R.id.event_detail_custom_time_type_spinner);
+        } else {
+            mTimeTypeSpinner = (Spinner) v.findViewById(R.id.event_detail_time_type_spinner);
+        }
         ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.time_type_array, android.R.layout.simple_spinner_item);
         typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -137,19 +174,20 @@ public class EventFragment extends Fragment {
 
         MenuItem toggleItem = menu.findItem(R.id.menu_item_toggle_reminder);
         if (AlarmService.isServiceAlarmOn(getActivity())) {
-            toggleItem.setTitle(R.string.stop_reminder);
+            toggleItem.setTitle(R.string.reminder_off);
         } else {
-            toggleItem.setTitle(R.string.start_reminder);
+            toggleItem.setTitle(R.string.reminder_on);
+        }
+
+        if (!mEvent.isCustom()) {
+            MenuItem deleteItem = menu.findItem(R.id.menu_item_delete_event);
+            deleteItem.setVisible(false);
         }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
-            case R.id.menu_item_edit_event:
-                //mTitleTextView.setKeyListener((KeyListener) mTitleTextView.getTag());
-                //mTitleTextView.setCursorVisible(true);
-                return true;
             case R.id.menu_item_toggle_reminder:
                 boolean shouldStartAlarm = !AlarmService.isServiceAlarmOn(getActivity());
                 Date date = mEvent.getReminderDate();
