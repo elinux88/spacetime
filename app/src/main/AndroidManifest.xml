@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="site.elioplasma.ecook.spacetimeeventreminder"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest
+    package="site.elioplasma.ecook.spacetimeeventreminder"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
         android:allowBackup="true"
@@ -25,7 +26,8 @@
             android:parentActivityName=".MainActivity"
             >
         </activity>
-        <service android:name=".AlarmService" />
+
+        <service android:name=".AlarmService"/>
     </application>
 
 </manifest>
