@@ -27,6 +27,7 @@
             android:id="@+id/event_detail_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:background="@android:color/transparent"
             android:textSize="24sp"
             tools:text="Astronomical Event"
@@ -77,8 +78,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:orientation="horizontal"
-            android:padding="@dimen/activity_horizontal_margin"
             >
 
             <Spinner
@@ -97,16 +98,25 @@
                 android:textAlignment="center"
                 />
 
+            <TextView
+                android:id="@+id/event_detail_reminder"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/event_reminder_label_post"
+                android:textAlignment="center"
+                android:textSize="18sp"
+                />
+
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/event_detail_reminder"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:text="@string/event_reminder_label_post"
-            android:textSize="24sp"
+        <Button
+            android:id="@+id/event_detail_reminder_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/activity_vertical_margin"
+            android:background="@drawable/apptheme_btn_default_holo_light"
+            android:text="@string/reminder_off"
             />
 
     </LinearLayout>

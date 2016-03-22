@@ -7,7 +7,7 @@
     <item
         android:id="@+id/menu_item_toggle_reminder"
         android:title="@string/enable_reminder"
-        app:showAsAction="ifRoom"
+        app:showAsAction="never"
         />
 
     <item

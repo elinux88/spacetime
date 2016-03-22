@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -35,6 +36,7 @@ public class EventFragment extends Fragment {
 
     private static final String ARG_EVENT_ID = "event_id";
     private static final String DIALOG_DATE = "DialogDate";
+    private static final String KEY_REMINDER = "reminder";
 
     private static final int REQUEST_DATE = 0;
 
@@ -47,6 +49,7 @@ public class EventFragment extends Fragment {
     private EditText mDescriptionEditText;
     private Spinner mTimeAmountSpinner;
     private Spinner mTimeTypeSpinner;
+    private Button mReminderButton;
 
     public static Intent newIntent(Context context) {
         return new Intent(context, EventFragment.class);
@@ -161,8 +164,6 @@ public class EventFragment extends Fragment {
         }
         ArrayAdapter<String> amountAdapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_spinner_item, amounts);
-        //ArrayAdapter<CharSequence> amountAdapter = ArrayAdapter.createFromResource(getActivity(),
-        //        intArray, android.R.layout.simple_spinner_item);
         amountAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mTimeAmountSpinner.setAdapter(amountAdapter);
 
@@ -211,6 +212,24 @@ public class EventFragment extends Fragment {
             }
         });
 
+        if (mEvent.isCustom()) {
+            mReminderButton = (Button) v.findViewById(R.id.event_detail_custom_reminder_button);
+        } else {
+            mReminderButton = (Button) v.findViewById(R.id.event_detail_reminder_button);
+        }
+        updateReminderButton();
+        mReminderButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mEvent.isReminderOn()) {
+                    mEvent.setReminderOn(false);
+                } else {
+                    mEvent.setReminderOn(true);
+                }
+                updateReminderButton();
+            }
+        });
+
         return v;
     }
 
@@ -219,6 +238,7 @@ public class EventFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_event, menu);
 
+        /*
         MenuItem toggleItem = menu.findItem(R.id.menu_item_toggle_reminder);
         if (AlarmService.isServiceAlarmOn(getActivity())) {
             toggleItem.setTitle(R.string.disable_reminder);
@@ -227,6 +247,7 @@ public class EventFragment extends Fragment {
             toggleItem.setTitle(R.string.enable_reminder);
             mEvent.setReminderOn(false);
         }
+        */
 
         if (!mEvent.isCustom()) {
             MenuItem deleteItem = menu.findItem(R.id.menu_item_delete_event);
@@ -237,12 +258,14 @@ public class EventFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
+            /*
             case R.id.menu_item_toggle_reminder:
                 boolean shouldStartAlarm = !AlarmService.isServiceAlarmOn(getActivity());
                 Date date = mEvent.getReminderDate();
                 AlarmService.setServiceAlarm(getActivity(), shouldStartAlarm, date);
                 getActivity().invalidateOptionsMenu();
                 return true;
+                */
             case R.id.menu_item_delete_event:
                 if (mEvent.isCustom()) {
                     if (EventData.get(getActivity()).deleteEvent(mEvent.getId())) {
@@ -255,6 +278,12 @@ public class EventFragment extends Fragment {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateReminderButton();
     }
 
     @Override
@@ -274,5 +303,15 @@ public class EventFragment extends Fragment {
     private void updateDate() {
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
         mDateButton.setText(sdf.format(mEvent.getDate()));
+    }
+
+    private void updateReminderButton() {
+        if (mEvent.isReminderOn()) {
+            mReminderButton.setText(R.string.reminder_on);
+            mReminderButton.setBackgroundResource(R.drawable.apptheme_btn_default_pressed_holo_light);
+        } else {
+            mReminderButton.setText(R.string.reminder_off);
+            mReminderButton.setBackgroundResource(R.drawable.apptheme_btn_default_normal_holo_light);
+        }
     }
 }

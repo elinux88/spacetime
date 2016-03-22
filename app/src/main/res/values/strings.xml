@@ -9,15 +9,17 @@
     <string name="delete_event">Delete Event</string>
     <string name="event_reminder_label">Reminder set for:</string>
     <string name="event_reminder_label_post">before</string>
+    <string name="reminder_off">Off</string>
+    <string name="reminder_on">On</string>
     <string name="enable_reminder">Enable Reminder</string>
     <string name="disable_reminder">Disable Reminder</string>
     <string name="date_picker_title">Date of event:</string>
     <string name="event_reminder_title">SpaceTime Event Reminder</string>
     <string name="event_reminder_text">An event will happen soon.</string>
     <string-array name="time_type_array">
-        <item>Minute(s)</item>
-        <item>Hour(s)</item>
-        <item>Day(s)</item>
+        <item>Minute</item>
+        <item>Hour</item>
+        <item>Day</item>
     </string-array>
     <string-array name="time_amount_array">
         <item>0</item>

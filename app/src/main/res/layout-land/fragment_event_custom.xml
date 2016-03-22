@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:padding="@dimen/activity_horizontal_margin"
     >
 
@@ -13,6 +13,7 @@
         android:id="@+id/event_detail_custom_top_box"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:background="@color/colorPrimary"
         android:elevation="4dp"
         android:orientation="vertical"
@@ -26,6 +27,7 @@
             android:id="@+id/event_detail_custom_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:background="@android:color/transparent"
             android:hint="Event Title"
             android:textSize="24sp"
@@ -35,7 +37,7 @@
             android:id="@+id/event_detail_custom_date_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/activity_vertical_margin"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:textSize="18sp"
             tools:text="1 Jan 1970"
             />
@@ -54,6 +56,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/event_detail_top_box"
+        android:layout_weight="1"
         android:background="@color/colorPrimary"
         android:elevation="2dp"
         android:orientation="vertical"
