@@ -23,7 +23,6 @@
         <activity
             android:name=".EventActivity"
             android:label="@string/event_details_name"
-            android:parentActivityName=".MainActivity"
             >
         </activity>
 
