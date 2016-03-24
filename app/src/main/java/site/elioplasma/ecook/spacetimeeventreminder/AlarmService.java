@@ -12,6 +12,7 @@ import android.support.v7.app.NotificationCompat;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by eli on 3/10/16.
@@ -24,20 +25,25 @@ public class AlarmService extends IntentService {
         return new Intent(context, AlarmService.class);
     }
 
-    public static void setServiceAlarm(Context context, boolean isOn, Date date) {
-        Intent i = AlarmService.newIntent(context);
-        PendingIntent pi = PendingIntent.getService(context, 0, i, 0);
+    public static void setServiceAlarm(Context context, boolean isOn) {
+        List<Event> eventList = EventData.get(context).getEvents();
+        for (Event event : eventList) {
+            if (event.isReminderOn()) {
+                Intent i = AlarmService.newIntent(context);
+                PendingIntent pi = PendingIntent.getService(context, 0, i, 0);
 
-        AlarmManager alarmManager = (AlarmManager)
-                context.getSystemService(Context.ALARM_SERVICE);
+                AlarmManager alarmManager = (AlarmManager)
+                        context.getSystemService(Context.ALARM_SERVICE);
 
-        if (isOn) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(date);
-            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pi);
-        } else {
-            alarmManager.cancel(pi);
-            pi.cancel();
+                if (isOn) {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(event.getReminderDate());
+                    alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pi);
+                } else {
+                    alarmManager.cancel(pi);
+                    pi.cancel();
+                }
+            }
         }
     }
 

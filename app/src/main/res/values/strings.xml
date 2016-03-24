@@ -5,6 +5,8 @@
     <string name="action_settings">Settings</string>
     <string name="event_title_hint">Enter a title for the event.</string>
     <string name="new_custom_event">New Custom Event</string>
+    <string name="pause_all_reminders">Pause All Reminders</string>
+    <string name="resume_all_reminders">Resume All Reminders</string>
     <string name="edit_event">Edit Event</string>
     <string name="delete_event">Delete Event</string>
     <string name="event_reminder_label">Reminder set for:</string>

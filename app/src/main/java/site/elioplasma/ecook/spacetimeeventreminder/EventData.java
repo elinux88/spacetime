@@ -15,6 +15,7 @@ public class EventData {
     private static EventData sEventData;
 
     private List<Event> mEvents;
+    private boolean mRemindersPaused;
 
     public static EventData get(Context context) {
         if (sEventData == null) {
@@ -83,5 +84,13 @@ public class EventData {
             }
         }
         return null;
+    }
+
+    public boolean isRemindersPaused() {
+        return mRemindersPaused;
+    }
+
+    public void setRemindersPaused(boolean remindersPaused) {
+        mRemindersPaused = remindersPaused;
     }
 }

@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * A fragment containing a RecyclerView.
  */
-public class MainActivityFragment extends Fragment {
+public class EventListFragment extends Fragment {
 
     private RecyclerView mEventRecyclerView;
     private EventAdapter mAdapter;
@@ -54,6 +54,13 @@ public class MainActivityFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_event_list, menu);
+
+        MenuItem pauseReminders = menu.findItem(R.id.menu_item_pause_reminders);
+        if (EventData.get(getActivity()).isRemindersPaused()) {
+            pauseReminders.setTitle(R.string.resume_all_reminders);
+        } else {
+            pauseReminders.setTitle(R.string.pause_all_reminders);
+        }
     }
 
     @Override
@@ -66,6 +73,16 @@ public class MainActivityFragment extends Fragment {
                 Intent intent = EventActivity
                         .newIntent(getActivity(), event.getId());
                 startActivity(intent);
+                return true;
+            case R.id.menu_item_pause_reminders:
+                boolean shouldStartAlarm = !AlarmService.isServiceAlarmOn(getActivity());
+                AlarmService.setServiceAlarm(getActivity(), shouldStartAlarm);
+                if (shouldStartAlarm) {
+                    EventData.get(getActivity()).setRemindersPaused(false);
+                } else {
+                    EventData.get(getActivity()).setRemindersPaused(true);
+                }
+                getActivity().invalidateOptionsMenu();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
