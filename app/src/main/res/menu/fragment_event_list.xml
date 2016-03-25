@@ -12,7 +12,7 @@
         />
 
     <item
-        android:id="@+id/menu_item_pause_reminders"
+        android:id="@+id/menu_item_toggle_reminders"
         android:title="@string/pause_all_reminders"
         app:showAsAction="never"
         />

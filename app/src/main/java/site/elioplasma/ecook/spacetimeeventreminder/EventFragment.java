@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -222,10 +221,10 @@ public class EventFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (mEvent.isReminderOn()) {
-                    AlarmService.removeReminderDate(mEvent.getId());
+                    AlarmService.setAlarmById(getActivity(), false, mEvent.getId());
                     mEvent.setReminderOn(false);
                 } else {
-                    AlarmService.addReminderDate(mEvent.getId(), mEvent.getReminderDate());
+                    AlarmService.setAlarmById(getActivity(), true, mEvent.getId());
                     mEvent.setReminderOn(true);
                 }
                 updateReminderButton();
@@ -240,17 +239,6 @@ public class EventFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_event, menu);
 
-        /*
-        MenuItem toggleItem = menu.findItem(R.id.menu_item_toggle_reminder);
-        if (AlarmService.isServiceAlarmOn(getActivity())) {
-            toggleItem.setTitle(R.string.disable_reminder);
-            mEvent.setReminderOn(true);
-        } else {
-            toggleItem.setTitle(R.string.enable_reminder);
-            mEvent.setReminderOn(false);
-        }
-        */
-
         if (!mEvent.isCustom()) {
             MenuItem deleteItem = menu.findItem(R.id.menu_item_delete_event);
             deleteItem.setVisible(false);
@@ -260,14 +248,6 @@ public class EventFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
-            /*
-            case R.id.menu_item_toggle_reminder:
-                boolean shouldStartAlarm = !AlarmService.isServiceAlarmOn(getActivity());
-                Date date = mEvent.getReminderDate();
-                AlarmService.setServiceAlarm(getActivity(), shouldStartAlarm, date);
-                getActivity().invalidateOptionsMenu();
-                return true;
-                */
             case R.id.menu_item_delete_event:
                 if (mEvent.isCustom()) {
                     if (EventData.get(getActivity()).deleteEvent(mEvent.getId())) {

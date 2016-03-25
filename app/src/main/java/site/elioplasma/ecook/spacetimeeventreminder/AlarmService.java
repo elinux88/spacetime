@@ -10,9 +10,10 @@ import android.content.res.Resources;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.NotificationCompat;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Map;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -21,22 +22,29 @@ import java.util.UUID;
 public class AlarmService extends IntentService {
 
     private static final String TAG = "AlarmService";
-    private static Map<UUID, Date> sReminderDates;
+    private static List<UUID> sEventIds;
 
     public static Intent newIntent(Context context) {
         return new Intent(context, AlarmService.class);
     }
 
-    public static void setServiceAlarm(Context context, boolean isOn) {
-        for (Map.Entry<UUID, Date> entry : sReminderDates.entrySet()) {
-            Intent i = AlarmService.newIntent(context);
-            PendingIntent pi = PendingIntent.getService(context, 0, i, 0);
+    public static void initAlarmService() {
+        if (sEventIds == null) {
+            sEventIds = new ArrayList<>();
+        }
+    }
+
+    public static void setAlarmAll(Context context, boolean isOn) {
+        for (int i = 0; i < sEventIds.size(); i++) {
+            Intent intent = AlarmService.newIntent(context);
+            PendingIntent pi = PendingIntent.getService(context, i, intent, 0);
 
             AlarmManager alarmManager = (AlarmManager)
                     context.getSystemService(Context.ALARM_SERVICE);
 
             if (isOn) {
-                Date date = entry.getValue();
+                Event event = EventData.get(context).getEvent(sEventIds.get(i));
+                Date date = event.getReminderDate();
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(date);
                 alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pi);
@@ -47,11 +55,35 @@ public class AlarmService extends IntentService {
         }
     }
 
-    public static boolean isServiceAlarmOn(Context context) {
-        Intent i = AlarmService.newIntent(context);
-        PendingIntent pi = PendingIntent
-                .getService(context, 0, i, PendingIntent.FLAG_NO_CREATE);
-        return pi != null;
+    public static void setAlarmById(Context context, boolean isOn, UUID id) {
+        if (isOn) {
+            sEventIds.add(id);
+            if (!EventData.get(context).areRemindersEnabled()) {
+                return;
+            }
+        }
+        for (int i = 0; i < sEventIds.size(); i++) {
+            if (id == sEventIds.get(i)) {
+                Intent intent = AlarmService.newIntent(context);
+                PendingIntent pi = PendingIntent.getService(context, i, intent, 0);
+
+                AlarmManager alarmManager = (AlarmManager)
+                        context.getSystemService(Context.ALARM_SERVICE);
+
+                if (isOn) {
+                    Event event = EventData.get(context).getEvent(sEventIds.get(i));
+                    Date date = event.getReminderDate();
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(date);
+                    alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pi);
+                } else {
+                    alarmManager.cancel(pi);
+                    pi.cancel();
+                    sEventIds.remove(id);
+                }
+                break;
+            }
+        }
     }
 
     public AlarmService() {
@@ -76,13 +108,5 @@ public class AlarmService extends IntentService {
         NotificationManagerCompat notificationManager =
                 NotificationManagerCompat.from(this);
         notificationManager.notify(0, notification);
-    }
-
-    public static void addReminderDate(UUID id, Date date) {
-        sReminderDates.put(id, date);
-    }
-
-    public static void removeReminderDate(UUID id) {
-        sReminderDates.remove(id);
     }
 }

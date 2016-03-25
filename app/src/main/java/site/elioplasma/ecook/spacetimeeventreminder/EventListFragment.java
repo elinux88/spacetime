@@ -28,6 +28,13 @@ public class EventListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        AlarmService.initAlarmService();
+        if (EventData.get(getActivity()).areRemindersEnabled()) {
+            AlarmService.setAlarmAll(getActivity(), false);
+        } else {
+            AlarmService.setAlarmAll(getActivity(), true);
+        }
     }
 
     @Override
@@ -55,11 +62,11 @@ public class EventListFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_event_list, menu);
 
-        MenuItem pauseReminders = menu.findItem(R.id.menu_item_pause_reminders);
-        if (EventData.get(getActivity()).isRemindersPaused()) {
-            pauseReminders.setTitle(R.string.resume_all_reminders);
+        MenuItem itemToggleReminders = menu.findItem(R.id.menu_item_toggle_reminders);
+        if (EventData.get(getActivity()).areRemindersEnabled()) {
+            itemToggleReminders.setTitle(R.string.pause_all_reminders);
         } else {
-            pauseReminders.setTitle(R.string.pause_all_reminders);
+            itemToggleReminders.setTitle(R.string.resume_all_reminders);
         }
     }
 
@@ -74,13 +81,14 @@ public class EventListFragment extends Fragment {
                         .newIntent(getActivity(), event.getId());
                 startActivity(intent);
                 return true;
-            case R.id.menu_item_pause_reminders:
-                boolean shouldStartAlarm = !AlarmService.isServiceAlarmOn(getActivity());
-                AlarmService.setServiceAlarm(getActivity(), shouldStartAlarm);
-                if (shouldStartAlarm) {
-                    EventData.get(getActivity()).setRemindersPaused(false);
+            case R.id.menu_item_toggle_reminders:
+                boolean alarmsAreEnabled = EventData.get(getActivity()).areRemindersEnabled();
+                if (alarmsAreEnabled) {
+                    AlarmService.setAlarmAll(getActivity(), false);
+                    EventData.get(getActivity()).setRemindersEnabled(false);
                 } else {
-                    EventData.get(getActivity()).setRemindersPaused(true);
+                    AlarmService.setAlarmAll(getActivity(), true);
+                    EventData.get(getActivity()).setRemindersEnabled(true);
                 }
                 getActivity().invalidateOptionsMenu();
                 return true;

@@ -15,7 +15,7 @@ public class EventData {
     private static EventData sEventData;
 
     private List<Event> mEvents;
-    private boolean mRemindersPaused;
+    private boolean mRemindersEnabled;
 
     public static EventData get(Context context) {
         if (sEventData == null) {
@@ -57,6 +57,7 @@ public class EventData {
             event.setDescription(eventDescriptions[i]);
             addEvent(event);
         }
+        mRemindersEnabled = true;
     }
 
     public void addEvent(Event e) {
@@ -86,11 +87,11 @@ public class EventData {
         return null;
     }
 
-    public boolean isRemindersPaused() {
-        return mRemindersPaused;
+    public boolean areRemindersEnabled() {
+        return mRemindersEnabled;
     }
 
-    public void setRemindersPaused(boolean remindersPaused) {
-        mRemindersPaused = remindersPaused;
+    public void setRemindersEnabled(boolean remindersPaused) {
+        mRemindersEnabled = remindersPaused;
     }
 }
