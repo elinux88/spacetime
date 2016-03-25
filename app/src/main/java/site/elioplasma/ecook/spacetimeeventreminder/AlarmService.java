@@ -22,6 +22,7 @@ import java.util.UUID;
 public class AlarmService extends IntentService {
 
     private static final String TAG = "AlarmService";
+    private static final String EXTRA_REMINDER_TEXT = "reminder_title";
     private static List<UUID> sEventIds;
 
     public static Intent newIntent(Context context) {
@@ -35,15 +36,17 @@ public class AlarmService extends IntentService {
     }
 
     public static void setAlarmAll(Context context, boolean isOn) {
-        for (int i = 0; i < sEventIds.size(); i++) {
+        for (UUID id : sEventIds) {
+            String title = EventData.get(context).getEvent(id).getTitle();
             Intent intent = AlarmService.newIntent(context);
-            PendingIntent pi = PendingIntent.getService(context, i, intent, 0);
+            intent.putExtra(EXTRA_REMINDER_TEXT, title);
+            PendingIntent pi = PendingIntent.getService(context, id.hashCode(), intent, 0);
 
             AlarmManager alarmManager = (AlarmManager)
                     context.getSystemService(Context.ALARM_SERVICE);
 
             if (isOn) {
-                Event event = EventData.get(context).getEvent(sEventIds.get(i));
+                Event event = EventData.get(context).getEvent(id);
                 Date date = event.getReminderDate();
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(date);
@@ -62,27 +65,24 @@ public class AlarmService extends IntentService {
                 return;
             }
         }
-        for (int i = 0; i < sEventIds.size(); i++) {
-            if (id == sEventIds.get(i)) {
-                Intent intent = AlarmService.newIntent(context);
-                PendingIntent pi = PendingIntent.getService(context, i, intent, 0);
+        String title = EventData.get(context).getEvent(id).getTitle();
+        Intent intent = AlarmService.newIntent(context);
+        intent.putExtra(EXTRA_REMINDER_TEXT, title);
+        PendingIntent pi = PendingIntent.getService(context, id.hashCode(), intent, 0);
 
-                AlarmManager alarmManager = (AlarmManager)
-                        context.getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmManager = (AlarmManager)
+                context.getSystemService(Context.ALARM_SERVICE);
 
-                if (isOn) {
-                    Event event = EventData.get(context).getEvent(sEventIds.get(i));
-                    Date date = event.getReminderDate();
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTime(date);
-                    alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pi);
-                } else {
-                    alarmManager.cancel(pi);
-                    pi.cancel();
-                    sEventIds.remove(id);
-                }
-                break;
-            }
+        if (isOn) {
+            Event event = EventData.get(context).getEvent(id);
+            Date date = event.getReminderDate();
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pi);
+        } else {
+            alarmManager.cancel(pi);
+            pi.cancel();
+            sEventIds.remove(id);
         }
     }
 
@@ -92,15 +92,16 @@ public class AlarmService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        String text = intent.getStringExtra(EXTRA_REMINDER_TEXT);
         Resources resources = getResources();
         Intent i = EventFragment.newIntent(this);
         PendingIntent pi = PendingIntent.getActivity(this, 0, i, 0);
 
         Notification notification = new NotificationCompat.Builder(this)
                 .setTicker(resources.getString(R.string.event_reminder_title))
-                .setSmallIcon(android.R.drawable.ic_menu_report_image)
+                .setSmallIcon(android.R.drawable.ic_menu_gallery)
                 .setContentTitle(resources.getString(R.string.event_reminder_title))
-                .setContentText(resources.getString(R.string.event_reminder_text))
+                .setContentText(text)
                 .setContentIntent(pi)
                 .setAutoCancel(true)
                 .build();
