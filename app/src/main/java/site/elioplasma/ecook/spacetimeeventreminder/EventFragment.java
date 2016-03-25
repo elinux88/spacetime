@@ -222,8 +222,10 @@ public class EventFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (mEvent.isReminderOn()) {
+                    AlarmService.removeReminderDate(mEvent.getId());
                     mEvent.setReminderOn(false);
                 } else {
+                    AlarmService.addReminderDate(mEvent.getId(), mEvent.getReminderDate());
                     mEvent.setReminderOn(true);
                 }
                 updateReminderButton();
