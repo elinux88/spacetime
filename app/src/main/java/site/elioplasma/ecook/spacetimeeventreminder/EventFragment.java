@@ -194,6 +194,9 @@ public class EventFragment extends Fragment {
                 Reminder reminder = mEvent.getReminder();
                 reminder.setAmount(amount);
                 mEvent.setReminder(reminder);
+                if (mEvent.isReminderOn()) {
+                    AlarmService.setAlarmById(getActivity(), true, mEvent.getId());
+                }
             }
 
             @Override
@@ -220,6 +223,9 @@ public class EventFragment extends Fragment {
                 Reminder reminder = mEvent.getReminder();
                 reminder.setType(position);
                 mEvent.setReminder(reminder);
+                if (mEvent.isReminderOn()) {
+                    AlarmService.setAlarmById(getActivity(), true, mEvent.getId());
+                }
             }
 
             @Override
@@ -237,13 +243,9 @@ public class EventFragment extends Fragment {
         mReminderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mEvent.isReminderOn()) {
-                    AlarmService.setAlarmById(getActivity(), false, mEvent.getId());
-                    mEvent.setReminderOn(false);
-                } else {
-                    AlarmService.setAlarmById(getActivity(), true, mEvent.getId());
-                    mEvent.setReminderOn(true);
-                }
+                boolean toggle = !mEvent.isReminderOn();
+                AlarmService.setAlarmById(getActivity(), toggle, mEvent.getId());
+                mEvent.setReminderOn(toggle);
                 updateReminderButton();
             }
         });
@@ -297,11 +299,17 @@ public class EventFragment extends Fragment {
                     .getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mEvent.setDate(date);
             updateDateTimeButton();
+            if (mEvent.isReminderOn()) {
+                AlarmService.setAlarmById(getActivity(), true, mEvent.getId());
+            }
         } else if (requestCode == REQUEST_TIME) {
             Date date = (Date) data
                     .getSerializableExtra(TimePickerFragment.EXTRA_TIME);
             mEvent.setDate(date);
             updateDateTimeButton();
+            if (mEvent.isReminderOn()) {
+                AlarmService.setAlarmById(getActivity(), true, mEvent.getId());
+            }
         }
     }
 
