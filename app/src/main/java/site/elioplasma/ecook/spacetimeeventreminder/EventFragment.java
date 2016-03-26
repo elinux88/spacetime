@@ -35,9 +35,11 @@ public class EventFragment extends Fragment {
 
     private static final String ARG_EVENT_ID = "event_id";
     private static final String DIALOG_DATE = "DialogDate";
+    private static final String DIALOG_TIME = "DialogTime";
     private static final String KEY_REMINDER = "reminder";
 
     private static final int REQUEST_DATE = 0;
+    private static final int REQUEST_TIME = 1;
 
     private Event mEvent;
     private TextView mTitleTextView;
@@ -45,9 +47,10 @@ public class EventFragment extends Fragment {
     private TextView mDescriptionTextView;
     private EditText mTitleEditText;
     private Button mDateButton;
+    private Button mTimeButton;
     private EditText mDescriptionEditText;
-    private Spinner mTimeAmountSpinner;
-    private Spinner mTimeTypeSpinner;
+    private Spinner mReminderAmountSpinner;
+    private Spinner mReminderTypeSpinner;
     private Button mReminderButton;
 
     public static Intent newIntent(Context context) {
@@ -111,7 +114,6 @@ public class EventFragment extends Fragment {
 
         if (mEvent.isCustom()) {
             mDateButton = (Button) v.findViewById(R.id.event_detail_custom_date_button);
-            updateDate();
             mDateButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -122,9 +124,24 @@ public class EventFragment extends Fragment {
                     dialog.show(manager, DIALOG_DATE);
                 }
             });
+
+            mTimeButton = (Button) v.findViewById(R.id.event_detail_custom_time_button);
+            mTimeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    FragmentManager manager = getFragmentManager();
+                    TimePickerFragment dialog = TimePickerFragment
+                            .newInstance(mEvent.getDate());
+                    dialog.setTargetFragment(EventFragment.this, REQUEST_TIME);
+                    dialog.show(manager, DIALOG_TIME);
+                }
+            });
+
+            updateDateTimeButton();
+
         } else {
             mDateTextView = (TextView) v.findViewById(R.id.event_detail_date);
-            SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+            SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy - h:mm a");
             mDateTextView.setText(sdf.format(mEvent.getDate()));
         }
 
@@ -153,9 +170,9 @@ public class EventFragment extends Fragment {
         }
 
         if (mEvent.isCustom()) {
-            mTimeAmountSpinner = (Spinner) v.findViewById(R.id.event_detail_custom_time_amount_spinner);
+            mReminderAmountSpinner = (Spinner) v.findViewById(R.id.event_detail_custom_time_amount_spinner);
         } else {
-            mTimeAmountSpinner = (Spinner) v.findViewById(R.id.event_detail_time_amount_spinner);
+            mReminderAmountSpinner = (Spinner) v.findViewById(R.id.event_detail_time_amount_spinner);
         }
         List<String> amounts = new ArrayList<String>();
         for (int i = 0; i < 60; i++) {
@@ -164,13 +181,13 @@ public class EventFragment extends Fragment {
         ArrayAdapter<String> amountAdapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_spinner_item, amounts);
         amountAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mTimeAmountSpinner.setAdapter(amountAdapter);
+        mReminderAmountSpinner.setAdapter(amountAdapter);
 
         String reminderAmount = Integer.toString(mEvent.getReminder().getAmount());
         int amountSpinnerPosition = amountAdapter.getPosition(reminderAmount);
-        mTimeAmountSpinner.setSelection(amountSpinnerPosition);
+        mReminderAmountSpinner.setSelection(amountSpinnerPosition);
 
-        mTimeAmountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mReminderAmountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 int amount = Integer.parseInt(parent.getItemAtPosition(position).toString());
@@ -186,18 +203,18 @@ public class EventFragment extends Fragment {
         });
 
         if (mEvent.isCustom()) {
-            mTimeTypeSpinner = (Spinner) v.findViewById(R.id.event_detail_custom_time_type_spinner);
+            mReminderTypeSpinner = (Spinner) v.findViewById(R.id.event_detail_custom_time_type_spinner);
         } else {
-            mTimeTypeSpinner = (Spinner) v.findViewById(R.id.event_detail_time_type_spinner);
+            mReminderTypeSpinner = (Spinner) v.findViewById(R.id.event_detail_time_type_spinner);
         }
         ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.time_type_array, android.R.layout.simple_spinner_item);
         typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mTimeTypeSpinner.setAdapter(typeAdapter);
+        mReminderTypeSpinner.setAdapter(typeAdapter);
 
-        mTimeTypeSpinner.setSelection(mEvent.getReminder().getType());
+        mReminderTypeSpinner.setSelection(mEvent.getReminder().getType());
 
-        mTimeTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mReminderTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Reminder reminder = mEvent.getReminder();
@@ -250,6 +267,7 @@ public class EventFragment extends Fragment {
         switch(item.getItemId()) {
             case R.id.menu_item_delete_event:
                 if (mEvent.isCustom()) {
+                    AlarmService.setAlarmById(getActivity(), false, mEvent.getId());
                     if (EventData.get(getActivity()).deleteEvent(mEvent.getId())) {
                         getActivity().finish();
                     } else {
@@ -278,13 +296,23 @@ public class EventFragment extends Fragment {
             Date date = (Date) data
                     .getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mEvent.setDate(date);
-            updateDate();
+            updateDateTimeButton();
+        } else if (requestCode == REQUEST_TIME) {
+            Date date = (Date) data
+                    .getSerializableExtra(TimePickerFragment.EXTRA_TIME);
+            mEvent.setDate(date);
+            updateDateTimeButton();
         }
     }
 
-    private void updateDate() {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
-        mDateButton.setText(sdf.format(mEvent.getDate()));
+    private void updateDateTimeButton() {
+        Date date = mEvent.getDate();
+
+        SimpleDateFormat sdfDate = new SimpleDateFormat("dd MMM yyyy");
+        mDateButton.setText(sdfDate.format(date));
+
+        SimpleDateFormat sdfTime = new SimpleDateFormat("h:mm a");
+        mTimeButton.setText(sdfTime.format(date));
     }
 
     private void updateReminderButton() {

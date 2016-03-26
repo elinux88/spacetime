@@ -12,7 +12,7 @@
     <LinearLayout
         android:id="@+id/event_detail_custom_top_box"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_weight="1"
         android:background="@color/colorPrimary"
         android:elevation="4dp"
@@ -33,14 +33,31 @@
             android:textSize="24sp"
             />
 
-        <Button
-            android:id="@+id/event_detail_custom_date_button"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:textSize="18sp"
-            tools:text="1 Jan 1970"
-            />
+            android:orientation="horizontal"
+            >
+
+            <Button
+                android:id="@+id/event_detail_custom_date_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="18sp"
+                tools:text="1 Jan 1970"
+                />
+
+            <Button
+                android:id="@+id/event_detail_custom_time_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="18sp"
+                tools:text="12:00 AM"
+                />
+
+        </LinearLayout>
 
         <EditText
             android:id="@+id/event_detail_custom_description"
@@ -54,7 +71,7 @@
     <LinearLayout
         android:id="@+id/event_detail_custom_bottom_box"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_below="@id/event_detail_top_box"
         android:layout_weight="1"
         android:background="@color/colorPrimary"
@@ -69,7 +86,7 @@
         <TextView
             android:id="@+id/event_detail_custom_reminder_label"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:text="@string/event_reminder_label"
             android:textSize="24sp"

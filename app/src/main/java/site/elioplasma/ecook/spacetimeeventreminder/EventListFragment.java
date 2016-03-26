@@ -132,7 +132,7 @@ public class EventListFragment extends Fragment {
         public void bindEvent(Event event) {
             mEvent = event;
             mTitleTextView.setText(mEvent.getTitle());
-            SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+            SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy - h:mm a");
             mDateTextView.setText(sdf.format(mEvent.getDate()));
             if (mEvent.isReminderOn()) {
                 mReminderOnTextView.setVisibility(View.VISIBLE);

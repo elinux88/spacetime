@@ -16,6 +16,7 @@
     <string name="enable_reminder">Enable Reminder</string>
     <string name="disable_reminder">Disable Reminder</string>
     <string name="date_picker_title">Date of event:</string>
+    <string name="time_picker_title">Time of event:</string>
     <string name="event_reminder_title">SpaceTime Event Reminder</string>
     <string name="event_reminder_text">An event will happen soon.</string>
     <string-array name="time_type_array">
