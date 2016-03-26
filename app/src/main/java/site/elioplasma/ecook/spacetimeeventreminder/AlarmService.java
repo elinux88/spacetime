@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.NotificationCompat;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import java.util.UUID;
 public class AlarmService extends IntentService {
 
     private static final String TAG = "AlarmService";
+    private static final String EXTRA_EVENT_ID = "event_id";
     private static final String EXTRA_REMINDER_TEXT = "reminder_title";
     private static List<UUID> sEventIds;
 
@@ -39,6 +41,7 @@ public class AlarmService extends IntentService {
         for (UUID id : sEventIds) {
             String title = EventData.get(context).getEvent(id).getTitle();
             Intent intent = AlarmService.newIntent(context);
+            intent.putExtra(EXTRA_EVENT_ID, id);
             intent.putExtra(EXTRA_REMINDER_TEXT, title);
             PendingIntent pi = PendingIntent.getService(context, id.hashCode(), intent, 0);
 
@@ -67,6 +70,7 @@ public class AlarmService extends IntentService {
         }
         String title = EventData.get(context).getEvent(id).getTitle();
         Intent intent = AlarmService.newIntent(context);
+        intent.putExtra(EXTRA_EVENT_ID, id);
         intent.putExtra(EXTRA_REMINDER_TEXT, title);
         PendingIntent pi = PendingIntent.getService(context, id.hashCode(), intent, 0);
 
@@ -92,10 +96,16 @@ public class AlarmService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        UUID id = (UUID) intent.getSerializableExtra(EXTRA_EVENT_ID);
         String text = intent.getStringExtra(EXTRA_REMINDER_TEXT);
         Resources resources = getResources();
-        Intent i = EventFragment.newIntent(this);
-        PendingIntent pi = PendingIntent.getActivity(this, 0, i, 0);
+
+        Intent eventIntent = EventActivity.newIntent(this, id);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addParentStack(EventActivity.class);
+        stackBuilder.addNextIntent(eventIntent);
+        PendingIntent pi = stackBuilder.getPendingIntent(id.hashCode(),
+                PendingIntent.FLAG_UPDATE_CURRENT);
 
         Notification notification = new NotificationCompat.Builder(this)
                 .setTicker(resources.getString(R.string.event_reminder_title))
@@ -108,6 +118,6 @@ public class AlarmService extends IntentService {
 
         NotificationManagerCompat notificationManager =
                 NotificationManagerCompat.from(this);
-        notificationManager.notify(0, notification);
+        notificationManager.notify(id.hashCode(), notification);
     }
 }
