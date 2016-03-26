@@ -17,7 +17,11 @@ public class Event {
     private boolean mReminderOn;
 
     public Event() {
-        mId = UUID.randomUUID();
+        this(UUID.randomUUID());
+    }
+
+    public Event(UUID id) {
+        mId = id;
         mCustom = false;
         mDate = new Date();
         mReminder = new Reminder();

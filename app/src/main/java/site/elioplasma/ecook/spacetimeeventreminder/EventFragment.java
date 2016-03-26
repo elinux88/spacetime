@@ -74,6 +74,11 @@ public class EventFragment extends Fragment {
         UUID eventId = (UUID) getArguments().getSerializable(ARG_EVENT_ID);
 
         mEvent = EventData.get(getActivity()).getEvent(eventId);
+        if (mEvent == null) {
+            mEvent = new Event();
+            mEvent.setCustom(true);
+            getActivity().finish();
+        }
     }
 
     @Nullable
@@ -280,6 +285,14 @@ public class EventFragment extends Fragment {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        EventData.get(getActivity())
+                .updateEvent(mEvent);
     }
 
     @Override

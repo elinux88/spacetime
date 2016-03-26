@@ -1,6 +1,9 @@
 package site.elioplasma.ecook.spacetimeeventreminder;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,13 +11,19 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.UUID;
 
+import site.elioplasma.ecook.spacetimeeventreminder.database.EventBaseHelper;
+import site.elioplasma.ecook.spacetimeeventreminder.database.EventCursorWrapper;
+import site.elioplasma.ecook.spacetimeeventreminder.database.EventDbSchema.EventTable;
+
 /**
  * Created by eli on 2/27/16.
  */
 public class EventData {
     private static EventData sEventData;
 
-    private List<Event> mEvents;
+    //private List<Event> mEvents;
+    private Context mContext;
+    private SQLiteDatabase mDatabase;
     private boolean mRemindersEnabled;
 
     public static EventData get(Context context) {
@@ -25,7 +34,10 @@ public class EventData {
     }
 
     private EventData(Context context) {
-        mEvents = new ArrayList<>();
+        mContext = context.getApplicationContext();
+        mDatabase = new EventBaseHelper(mContext)
+                .getWritableDatabase();
+        //mEvents = new ArrayList<>();
         String[] eventNames = {
                 "Total Solar Eclipse",
                 "Penumbra Lunar Eclipse",
@@ -61,30 +73,94 @@ public class EventData {
     }
 
     public void addEvent(Event e) {
-        mEvents.add(e);
+        //mEvents.add(e);
+        ContentValues values = getContentValues(e);
+
+        mDatabase.insert(EventTable.NAME, null, values);
     }
 
     public boolean deleteEvent(UUID id) {
+        /*
         for (Event event : mEvents) {
             if (event.getId().equals(id)) {
                 mEvents.remove(event);
                 return true;
             }
         }
+        */
         return false;
     }
 
     public List<Event> getEvents() {
-        return mEvents;
+        List<Event> events = new ArrayList<>();
+
+        EventCursorWrapper cursor = queryEvents(null, null);
+
+        try {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                events.add(cursor.getEvent());
+                cursor.moveToNext();
+            }
+        } finally {
+            cursor.close();
+        }
+
+        return events;
     }
 
     public Event getEvent(UUID id) {
-        for (Event event : mEvents) {
-            if (event.getId().equals(id)) {
-                return event;
+        EventCursorWrapper cursor = queryEvents(
+                EventTable.Cols.UUID + " = ?",
+                new String[] { id.toString() }
+        );
+
+        try {
+            if (cursor.getCount() == 0) {
+                return null;
             }
+
+            cursor.moveToFirst();
+            return cursor.getEvent();
+        } finally {
+            cursor.close();
         }
-        return null;
+    }
+
+    public void updateEvent(Event event) {
+        String uuidString = event.getId().toString();
+        ContentValues values = getContentValues(event);
+
+        mDatabase.update(EventTable.NAME, values,
+                EventTable.Cols.UUID + " = ?",
+                new String[] { uuidString });
+    }
+
+    private static ContentValues getContentValues(Event event) {
+        ContentValues values = new ContentValues();
+        values.put(EventTable.Cols.UUID, event.getId().toString());
+        values.put(EventTable.Cols.CUSTOM, event.isCustom() ? 1 : 0);
+        values.put(EventTable.Cols.TITLE, event.getTitle());
+        values.put(EventTable.Cols.DATE, event.getDate().getTime());
+        values.put(EventTable.Cols.DESCRIPTION, event.getDescription());
+        //values.put(EventTable.Cols.REMINDER, event.getReminder());
+        values.put(EventTable.Cols.REMINDER_ON, event.isReminderOn() ? 1 : 0);
+
+        return values;
+    }
+
+    private EventCursorWrapper queryEvents(String whereClause, String[] whereArgs) {
+        Cursor cursor = mDatabase.query(
+                EventTable.NAME,
+                null, // Columns - null selects all columns
+                whereClause,
+                whereArgs,
+                null, // groupBy
+                null, // having
+                null  // orderBy
+        );
+
+        return new EventCursorWrapper(cursor);
     }
 
     public boolean areRemindersEnabled() {

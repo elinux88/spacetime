@@ -62,6 +62,9 @@ public class AlarmService extends IntentService {
     }
 
     public static void setAlarmById(Context context, boolean isOn, UUID id) {
+        if (sEventIds == null) {
+            sEventIds = new ArrayList<>();
+        }
         if (isOn) {
             sEventIds.add(id);
             if (!EventData.get(context).areRemindersEnabled()) {
