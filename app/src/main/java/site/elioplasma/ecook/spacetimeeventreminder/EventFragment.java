@@ -50,7 +50,7 @@ public class EventFragment extends Fragment {
     private Button mTimeButton;
     private EditText mDescriptionEditText;
     private Spinner mReminderAmountSpinner;
-    private Spinner mReminderTypeSpinner;
+    private Spinner mReminderUnitSpinner;
     private Button mReminderButton;
 
     public static Intent newIntent(Context context) {
@@ -188,7 +188,7 @@ public class EventFragment extends Fragment {
         amountAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mReminderAmountSpinner.setAdapter(amountAdapter);
 
-        String reminderAmount = Integer.toString(mEvent.getReminder().getAmount());
+        String reminderAmount = Integer.toString(mEvent.getReminderTimeAmount());
         int amountSpinnerPosition = amountAdapter.getPosition(reminderAmount);
         mReminderAmountSpinner.setSelection(amountSpinnerPosition);
 
@@ -196,9 +196,7 @@ public class EventFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 int amount = Integer.parseInt(parent.getItemAtPosition(position).toString());
-                Reminder reminder = mEvent.getReminder();
-                reminder.setAmount(amount);
-                mEvent.setReminder(reminder);
+                mEvent.setReminderTimeAmount(amount);
                 if (mEvent.isReminderOn()) {
                     AlarmService.setAlarmById(getActivity(), true, mEvent.getId());
                 }
@@ -211,23 +209,21 @@ public class EventFragment extends Fragment {
         });
 
         if (mEvent.isCustom()) {
-            mReminderTypeSpinner = (Spinner) v.findViewById(R.id.event_detail_custom_time_type_spinner);
+            mReminderUnitSpinner = (Spinner) v.findViewById(R.id.event_detail_custom_time_unit_spinner);
         } else {
-            mReminderTypeSpinner = (Spinner) v.findViewById(R.id.event_detail_time_type_spinner);
+            mReminderUnitSpinner = (Spinner) v.findViewById(R.id.event_detail_time_unit_spinner);
         }
         ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.time_type_array, android.R.layout.simple_spinner_item);
         typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mReminderTypeSpinner.setAdapter(typeAdapter);
+        mReminderUnitSpinner.setAdapter(typeAdapter);
 
-        mReminderTypeSpinner.setSelection(mEvent.getReminder().getType());
+        mReminderUnitSpinner.setSelection(mEvent.getReminderTimeUnit());
 
-        mReminderTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mReminderUnitSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Reminder reminder = mEvent.getReminder();
-                reminder.setType(position);
-                mEvent.setReminder(reminder);
+                mEvent.setReminderTimeUnit(position);
                 if (mEvent.isReminderOn()) {
                     AlarmService.setAlarmById(getActivity(), true, mEvent.getId());
                 }

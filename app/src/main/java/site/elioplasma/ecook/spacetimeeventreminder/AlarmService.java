@@ -67,7 +67,7 @@ public class AlarmService extends IntentService {
         }
         if (isOn) {
             sEventIds.add(id);
-            if (!EventData.get(context).areRemindersEnabled()) {
+            if (!EventData.get(context).isRemindersEnabled()) {
                 return;
             }
         }

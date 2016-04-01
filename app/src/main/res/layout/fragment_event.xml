@@ -90,7 +90,7 @@
                 />
 
             <Spinner
-                android:id="@+id/event_detail_time_type_spinner"
+                android:id="@+id/event_detail_time_unit_spinner"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

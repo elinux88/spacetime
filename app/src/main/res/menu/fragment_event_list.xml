@@ -12,8 +12,20 @@
         />
 
     <item
-        android:id="@+id/menu_item_toggle_reminders"
+        android:id="@+id/menu_item_toggle_all_reminders"
         android:title="@string/pause_all_reminders"
+        app:showAsAction="never"
+        />
+
+    <item
+        android:id="@+id/menu_item_filter_by_reminder"
+        android:title="@string/hide_without_reminders"
+        app:showAsAction="never"
+        />
+
+    <item
+        android:id="@+id/menu_item_filter_by_custom"
+        android:title="@string/hide_not_custom"
         app:showAsAction="never"
         />
 

@@ -2,18 +2,24 @@ package site.elioplasma.ecook.spacetimeeventreminder;
 
 import java.util.Date;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by eli on 2/27/16.
  */
 public class Event {
 
+    private static final int TIME_UNIT_MINUTE = 0;
+    private static final int TIME_UNIT_HOUR = 1;
+    private static final int TIME_UNIT_DAY = 2;
+
     private UUID mId;
     private boolean mCustom;
     private String mTitle;
     private Date mDate;
     private String mDescription;
-    private Reminder mReminder;
+    private int mReminderTimeAmount;
+    private int mReminderTimeUnit;
     private boolean mReminderOn;
 
     public Event() {
@@ -24,13 +30,20 @@ public class Event {
         mId = id;
         mCustom = false;
         mDate = new Date();
-        mReminder = new Reminder();
     }
 
     public Date getReminderDate() {
-        long millis = mReminder.getAmountInMillis();
-        Date reminderDate = new Date(mDate.getTime() - millis);
-        return reminderDate;
+        long millis = 0;
+
+        if (mReminderTimeUnit == TIME_UNIT_MINUTE) {
+            millis = TimeUnit.MINUTES.toMillis(mReminderTimeAmount);
+        } else if (mReminderTimeUnit == TIME_UNIT_HOUR) {
+            millis = TimeUnit.HOURS.toMillis(mReminderTimeAmount);
+        } else if (mReminderTimeUnit == TIME_UNIT_DAY) {
+            millis = TimeUnit.DAYS.toMillis(mReminderTimeAmount);
+        }
+
+        return new Date(mDate.getTime() - millis);
     }
 
     public UUID getId() {
@@ -69,12 +82,20 @@ public class Event {
         mDescription = description;
     }
 
-    public Reminder getReminder() {
-        return mReminder;
+    public int getReminderTimeAmount() {
+        return mReminderTimeAmount;
     }
 
-    public void setReminder(Reminder reminder) {
-        mReminder = reminder;
+    public void setReminderTimeAmount(int reminderTimeAmount) {
+        mReminderTimeAmount = reminderTimeAmount;
+    }
+
+    public int getReminderTimeUnit() {
+        return mReminderTimeUnit;
+    }
+
+    public void setReminderTimeUnit(int reminderTimeUnit) {
+        mReminderTimeUnit = reminderTimeUnit;
     }
 
     public boolean isReminderOn() {

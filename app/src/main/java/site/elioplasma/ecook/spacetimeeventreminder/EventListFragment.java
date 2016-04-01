@@ -30,7 +30,7 @@ public class EventListFragment extends Fragment {
         setHasOptionsMenu(true);
 
         AlarmService.initAlarmService();
-        if (EventData.get(getActivity()).areRemindersEnabled()) {
+        if (EventData.get(getActivity()).isRemindersEnabled()) {
             AlarmService.setAlarmAll(getActivity(), false);
         } else {
             AlarmService.setAlarmAll(getActivity(), true);
@@ -62,11 +62,25 @@ public class EventListFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_event_list, menu);
 
-        MenuItem itemToggleReminders = menu.findItem(R.id.menu_item_toggle_reminders);
-        if (EventData.get(getActivity()).areRemindersEnabled()) {
-            itemToggleReminders.setTitle(R.string.pause_all_reminders);
+        MenuItem itemToggleAllReminders = menu.findItem(R.id.menu_item_toggle_all_reminders);
+        if (EventData.get(getActivity()).isRemindersEnabled()) {
+            itemToggleAllReminders.setTitle(R.string.pause_all_reminders);
         } else {
-            itemToggleReminders.setTitle(R.string.resume_all_reminders);
+            itemToggleAllReminders.setTitle(R.string.resume_all_reminders);
+        }
+
+        MenuItem itemFilterByReminder = menu.findItem(R.id.menu_item_filter_by_reminder);
+        if (EventData.get(getActivity()).isFilterByReminders()) {
+            itemFilterByReminder.setTitle(R.string.show_without_reminders);
+        } else {
+            itemFilterByReminder.setTitle(R.string.hide_without_reminders);
+        }
+
+        MenuItem itemFilterByCustom = menu.findItem(R.id.menu_item_filter_by_custom);
+        if (EventData.get(getActivity()).isFilterByCustom()) {
+            itemFilterByCustom.setTitle(R.string.show_not_custom);
+        } else {
+            itemFilterByCustom.setTitle(R.string.hide_not_custom);
         }
     }
 
@@ -81,8 +95,8 @@ public class EventListFragment extends Fragment {
                         .newIntent(getActivity(), event.getId());
                 startActivity(intent);
                 return true;
-            case R.id.menu_item_toggle_reminders:
-                boolean alarmsAreEnabled = EventData.get(getActivity()).areRemindersEnabled();
+            case R.id.menu_item_toggle_all_reminders:
+                boolean alarmsAreEnabled = EventData.get(getActivity()).isRemindersEnabled();
                 if (alarmsAreEnabled) {
                     AlarmService.setAlarmAll(getActivity(), false);
                     EventData.get(getActivity()).setRemindersEnabled(false);
@@ -91,6 +105,29 @@ public class EventListFragment extends Fragment {
                     EventData.get(getActivity()).setRemindersEnabled(true);
                 }
                 getActivity().invalidateOptionsMenu();
+                EventData.get(getActivity()).updateSettings();
+                return true;
+            case R.id.menu_item_filter_by_reminder:
+                boolean filterByReminder = EventData.get(getActivity()).isFilterByReminders();
+                if (filterByReminder) {
+                    EventData.get(getActivity()).setFilterByReminders(false);
+                } else {
+                    EventData.get(getActivity()).setFilterByReminders(true);
+                }
+                getActivity().invalidateOptionsMenu();
+                EventData.get(getActivity()).updateSettings();
+                updateUI();
+                return true;
+            case R.id.menu_item_filter_by_custom:
+                boolean filterByCustom = EventData.get(getActivity()).isFilterByCustom();
+                if (filterByCustom) {
+                    EventData.get(getActivity()).setFilterByCustom(false);
+                } else {
+                    EventData.get(getActivity()).setFilterByCustom(true);
+                }
+                getActivity().invalidateOptionsMenu();
+                EventData.get(getActivity()).updateSettings();
+                updateUI();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
