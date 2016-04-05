@@ -8,7 +8,6 @@ import java.util.UUID;
 
 import site.elioplasma.ecook.spacetimeeventreminder.Event;
 import site.elioplasma.ecook.spacetimeeventreminder.database.EventDbSchema.EventTable;
-import site.elioplasma.ecook.spacetimeeventreminder.database.EventDbSchema.SettingTable;
 
 /**
  * Created by eli on 3/26/16.
@@ -38,14 +37,5 @@ public class EventCursorWrapper extends CursorWrapper {
         event.setReminderOn(isReminderOn != 0);
 
         return event;
-    }
-
-    public int[] getSettings() {
-        int remindersEnabled = getInt(getColumnIndex(SettingTable.Cols.REMINDERS_ENABLED));
-        int filterByReminders = getInt(getColumnIndex(SettingTable.Cols.FILTER_BY_REMINDERS));
-        int filterByCustom = getInt(getColumnIndex(SettingTable.Cols.FILTER_BY_CUSTOM));
-
-        int[] settings = { remindersEnabled, filterByReminders, filterByCustom };
-        return settings;
     }
 }

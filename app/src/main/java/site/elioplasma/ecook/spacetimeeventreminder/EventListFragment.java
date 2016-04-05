@@ -30,7 +30,7 @@ public class EventListFragment extends Fragment {
         setHasOptionsMenu(true);
 
         AlarmService.initAlarmService();
-        if (EventData.get(getActivity()).isRemindersEnabled()) {
+        if (QueryPreferences.getStoredRemindersEnabled(getActivity())) {
             AlarmService.setAlarmAll(getActivity(), false);
         } else {
             AlarmService.setAlarmAll(getActivity(), true);
@@ -63,21 +63,21 @@ public class EventListFragment extends Fragment {
         inflater.inflate(R.menu.fragment_event_list, menu);
 
         MenuItem itemToggleAllReminders = menu.findItem(R.id.menu_item_toggle_all_reminders);
-        if (EventData.get(getActivity()).isRemindersEnabled()) {
+        if (QueryPreferences.getStoredRemindersEnabled(getActivity())) {
             itemToggleAllReminders.setTitle(R.string.pause_all_reminders);
         } else {
             itemToggleAllReminders.setTitle(R.string.resume_all_reminders);
         }
 
         MenuItem itemFilterByReminder = menu.findItem(R.id.menu_item_filter_by_reminder);
-        if (EventData.get(getActivity()).isFilterByReminders()) {
+        if (QueryPreferences.getStoredFilterByReminders(getActivity())) {
             itemFilterByReminder.setTitle(R.string.show_without_reminders);
         } else {
             itemFilterByReminder.setTitle(R.string.hide_without_reminders);
         }
 
         MenuItem itemFilterByCustom = menu.findItem(R.id.menu_item_filter_by_custom);
-        if (EventData.get(getActivity()).isFilterByCustom()) {
+        if (QueryPreferences.getStoredFilterByCustom(getActivity())) {
             itemFilterByCustom.setTitle(R.string.show_not_custom);
         } else {
             itemFilterByCustom.setTitle(R.string.hide_not_custom);
@@ -96,37 +96,34 @@ public class EventListFragment extends Fragment {
                 startActivity(intent);
                 return true;
             case R.id.menu_item_toggle_all_reminders:
-                boolean alarmsAreEnabled = EventData.get(getActivity()).isRemindersEnabled();
+                boolean alarmsAreEnabled = QueryPreferences.getStoredRemindersEnabled(getActivity());
                 if (alarmsAreEnabled) {
                     AlarmService.setAlarmAll(getActivity(), false);
-                    EventData.get(getActivity()).setRemindersEnabled(false);
+                    QueryPreferences.setStoredRemindersEnabled(getActivity(), false);
                 } else {
                     AlarmService.setAlarmAll(getActivity(), true);
-                    EventData.get(getActivity()).setRemindersEnabled(true);
+                    QueryPreferences.setStoredRemindersEnabled(getActivity(), true);
                 }
                 getActivity().invalidateOptionsMenu();
-                EventData.get(getActivity()).updateSettings();
                 return true;
             case R.id.menu_item_filter_by_reminder:
-                boolean filterByReminder = EventData.get(getActivity()).isFilterByReminders();
+                boolean filterByReminder = QueryPreferences.getStoredFilterByReminders(getActivity());
                 if (filterByReminder) {
-                    EventData.get(getActivity()).setFilterByReminders(false);
+                    QueryPreferences.setStoredFilterByReminders(getActivity(), false);
                 } else {
-                    EventData.get(getActivity()).setFilterByReminders(true);
+                    QueryPreferences.setStoredFilterByReminders(getActivity(), true);
                 }
                 getActivity().invalidateOptionsMenu();
-                EventData.get(getActivity()).updateSettings();
                 updateUI();
                 return true;
             case R.id.menu_item_filter_by_custom:
-                boolean filterByCustom = EventData.get(getActivity()).isFilterByCustom();
+                boolean filterByCustom = QueryPreferences.getStoredFilterByCustom(getActivity());
                 if (filterByCustom) {
-                    EventData.get(getActivity()).setFilterByCustom(false);
+                    QueryPreferences.setStoredFilterByCustom(getActivity(), false);
                 } else {
-                    EventData.get(getActivity()).setFilterByCustom(true);
+                    QueryPreferences.setStoredFilterByCustom(getActivity(), true);
                 }
                 getActivity().invalidateOptionsMenu();
-                EventData.get(getActivity()).updateSettings();
                 updateUI();
                 return true;
             default:
@@ -136,7 +133,7 @@ public class EventListFragment extends Fragment {
 
     private void updateUI() {
         EventData eventData = EventData.get(getActivity());
-        List<Event> events = eventData.getEvents();
+        List<Event> events = eventData.getEvents(getActivity());
 
         if (mAdapter == null) {
             mAdapter = new EventAdapter(events);

@@ -14,7 +14,6 @@ import java.util.UUID;
 import site.elioplasma.ecook.spacetimeeventreminder.database.EventBaseHelper;
 import site.elioplasma.ecook.spacetimeeventreminder.database.EventCursorWrapper;
 import site.elioplasma.ecook.spacetimeeventreminder.database.EventDbSchema.EventTable;
-import site.elioplasma.ecook.spacetimeeventreminder.database.EventDbSchema.SettingTable;
 
 /**
  * Created by eli on 2/27/16.
@@ -24,9 +23,6 @@ public class EventData {
 
     private Context mContext;
     private SQLiteDatabase mDatabase;
-    private boolean mRemindersEnabled;
-    private boolean mFilterByReminders;
-    private boolean mFilterByCustom;
 
     public static EventData get(Context context) {
         if (sEventData == null) {
@@ -39,21 +35,6 @@ public class EventData {
         mContext = context.getApplicationContext();
         mDatabase = new EventBaseHelper(mContext)
                 .getWritableDatabase();
-
-        EventCursorWrapper settingCursor = querySettings();
-        try {
-            if (settingCursor.getCount() == 0) {
-                initSettings();
-            } else {
-                settingCursor.moveToFirst();
-                int[] settings = settingCursor.getSettings();
-                mRemindersEnabled = settings[0] != 0;
-                mFilterByReminders = settings[0] != 0;
-                mFilterByCustom = settings[0] != 0;
-            }
-        } finally {
-            settingCursor.close();
-        }
 
         EventCursorWrapper eventCursor = queryEvents(null, null);
         try {
@@ -78,17 +59,20 @@ public class EventData {
         return true;
     }
 
-    public List<Event> getEvents() {
+    public List<Event> getEvents(Context context) {
         List<Event> events = new ArrayList<>();
 
         EventCursorWrapper cursor;
 
-        if (mFilterByReminders && mFilterByCustom) {
+        boolean filterByReminders = QueryPreferences.getStoredFilterByReminders(context);
+        boolean filterByCustom = QueryPreferences.getStoredFilterByCustom(context);
+
+        if (filterByReminders && filterByCustom) {
             cursor = queryEventsWithInt(
                     EventTable.Cols.REMINDER_ON + " = 1 and " + EventTable.Cols.CUSTOM + " = 1");
-        } else if (mFilterByReminders) {
+        } else if (filterByReminders) {
             cursor = queryEventsWithInt(EventTable.Cols.REMINDER_ON + " = 1");
-        } else if (mFilterByCustom) {
+        } else if (filterByCustom) {
             cursor = queryEventsWithInt(EventTable.Cols.CUSTOM + " = 1");
         } else {
             cursor = queryEvents(null, null);
@@ -131,16 +115,7 @@ public class EventData {
 
         mDatabase.update(EventTable.NAME, values,
                 EventTable.Cols.UUID + " = ?",
-                new String[] { uuidString });
-    }
-
-    public void updateSettings() {
-        ContentValues values = new ContentValues();
-        values.put(SettingTable.Cols.REMINDERS_ENABLED, mRemindersEnabled ? 1 : 0);
-        values.put(SettingTable.Cols.FILTER_BY_REMINDERS, mFilterByReminders ? 1 : 0);
-        values.put(SettingTable.Cols.FILTER_BY_CUSTOM, mFilterByCustom ? 1 : 0);
-
-        mDatabase.update(SettingTable.NAME, values, null, null);
+                new String[]{uuidString});
     }
 
     private static ContentValues getContentValues(Event event) {
@@ -183,50 +158,6 @@ public class EventData {
         );
 
         return new EventCursorWrapper(cursor);
-    }
-
-    private EventCursorWrapper querySettings() {
-        Cursor cursor = mDatabase.query(
-                SettingTable.NAME,
-                null, // Columns - null selects all columns
-                null,
-                null,
-                null, // groupBy
-                null, // having
-                null  // orderBy
-        );
-
-        return new EventCursorWrapper(cursor);
-    }
-
-    public boolean isRemindersEnabled() {
-        return mRemindersEnabled;
-    }
-
-    public void setRemindersEnabled(boolean remindersPaused) {
-        mRemindersEnabled = remindersPaused;
-    }
-
-    public boolean isFilterByReminders() {
-        return mFilterByReminders;
-    }
-
-    public void setFilterByReminders(boolean filterByReminders) {
-        mFilterByReminders = filterByReminders;
-    }
-
-    public boolean isFilterByCustom() {
-        return mFilterByCustom;
-    }
-
-    public void setFilterByCustom(boolean filterByCustom) {
-        mFilterByCustom = filterByCustom;
-    }
-
-    private void initSettings() {
-        mRemindersEnabled = true;
-        mFilterByReminders = false;
-        mFilterByCustom = false;
     }
 
     private void initEvents() {

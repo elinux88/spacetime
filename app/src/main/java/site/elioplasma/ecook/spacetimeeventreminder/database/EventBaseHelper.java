@@ -5,7 +5,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import site.elioplasma.ecook.spacetimeeventreminder.database.EventDbSchema.EventTable;
-import site.elioplasma.ecook.spacetimeeventreminder.database.EventDbSchema.SettingTable;
 
 /**
  * Created by eli on 3/26/16.
@@ -30,14 +29,6 @@ public class EventBaseHelper extends SQLiteOpenHelper {
                 EventTable.Cols.REMINDER_TIME_AMOUNT + ", " +
                 EventTable.Cols.REMINDER_TIME_UNIT + ", " +
                 EventTable.Cols.REMINDER_ON +
-                ")"
-        );
-
-        db.execSQL("create table " + SettingTable.NAME + "(" +
-                " _id integer primary key autoincrement, " +
-                SettingTable.Cols.REMINDERS_ENABLED + ", " +
-                SettingTable.Cols.FILTER_BY_REMINDERS + ", " +
-                SettingTable.Cols.FILTER_BY_CUSTOM +
                 ")"
         );
     }
