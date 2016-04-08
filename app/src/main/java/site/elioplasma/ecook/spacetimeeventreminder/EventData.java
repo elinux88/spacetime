@@ -125,6 +125,7 @@ public class EventData {
         values.put(EventTable.Cols.TITLE, event.getTitle());
         values.put(EventTable.Cols.DATE, event.getDate().getTime());
         values.put(EventTable.Cols.DESCRIPTION, event.getDescription());
+        values.put(EventTable.Cols.SEARCH_TERM, event.getSearchTerm());
         values.put(EventTable.Cols.REMINDER_TIME_AMOUNT, event.getReminderTimeAmount());
         values.put(EventTable.Cols.REMINDER_TIME_UNIT, event.getReminderTimeUnit());
         values.put(EventTable.Cols.REMINDER_ON, event.isReminderOn() ? 1 : 0);
@@ -182,11 +183,19 @@ public class EventData {
                 "...",
                 "...",
         };
+        String[] eventSearchTerms = {
+                "sun",
+                "moon",
+                "lyrid",
+                "mars",
+                "ophiuchid",
+        };
         for (int i = 0; i < eventNames.length; i++) {
             Event event = new Event();
             event.setTitle(eventNames[i]);
             event.setDate(eventDates[i]);
             event.setDescription(eventDescriptions[i]);
+            event.setSearchTerm(eventSearchTerms[i]);
             addEvent(event);
         }
     }

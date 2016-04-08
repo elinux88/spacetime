@@ -13,6 +13,7 @@ public class EventDbSchema {
             public static final String TITLE = "title";
             public static final String DATE = "date";
             public static final String DESCRIPTION = "description";
+            public static final String SEARCH_TERM = "search_term";
             public static final String REMINDER_TIME_AMOUNT = "reminder_time_amount";
             public static final String REMINDER_TIME_UNIT = "reminder_time_unit";
             public static final String REMINDER_ON = "reminder_on";

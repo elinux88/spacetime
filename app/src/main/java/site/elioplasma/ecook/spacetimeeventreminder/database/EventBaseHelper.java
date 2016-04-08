@@ -26,6 +26,7 @@ public class EventBaseHelper extends SQLiteOpenHelper {
                 EventTable.Cols.TITLE + ", " +
                 EventTable.Cols.DATE + ", " +
                 EventTable.Cols.DESCRIPTION + ", " +
+                EventTable.Cols.SEARCH_TERM + ", " +
                 EventTable.Cols.REMINDER_TIME_AMOUNT + ", " +
                 EventTable.Cols.REMINDER_TIME_UNIT + ", " +
                 EventTable.Cols.REMINDER_ON +

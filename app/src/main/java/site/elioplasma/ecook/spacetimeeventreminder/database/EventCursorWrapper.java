@@ -23,6 +23,7 @@ public class EventCursorWrapper extends CursorWrapper {
         String title = getString(getColumnIndex(EventTable.Cols.TITLE));
         long date = getLong(getColumnIndex(EventTable.Cols.DATE));
         String description = getString(getColumnIndex(EventTable.Cols.DESCRIPTION));
+        String search_term = getString(getColumnIndex(EventTable.Cols.SEARCH_TERM));
         int reminderTimeAmount = getInt(getColumnIndex(EventTable.Cols.REMINDER_TIME_AMOUNT));
         int reminderTimeUnit = getInt(getColumnIndex(EventTable.Cols.REMINDER_TIME_UNIT));
         int isReminderOn = getInt(getColumnIndex(EventTable.Cols.REMINDER_ON));
@@ -32,6 +33,7 @@ public class EventCursorWrapper extends CursorWrapper {
         event.setTitle(title);
         event.setDate(new Date(date));
         event.setDescription(description);
+        event.setSearchTerm(search_term);
         event.setReminderTimeAmount(reminderTimeAmount);
         event.setReminderTimeUnit(reminderTimeUnit);
         event.setReminderOn(isReminderOn != 0);

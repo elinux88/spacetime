@@ -18,6 +18,7 @@ public class Event {
     private String mTitle;
     private Date mDate;
     private String mDescription;
+    private String mSearchTerm;
     private int mReminderTimeAmount;
     private int mReminderTimeUnit;
     private boolean mReminderOn;
@@ -80,6 +81,14 @@ public class Event {
 
     public void setDescription(String description) {
         mDescription = description;
+    }
+
+    public String getSearchTerm() {
+        return mSearchTerm;
+    }
+
+    public void setSearchTerm(String searchTerm) {
+        mSearchTerm = searchTerm;
     }
 
     public int getReminderTimeAmount() {

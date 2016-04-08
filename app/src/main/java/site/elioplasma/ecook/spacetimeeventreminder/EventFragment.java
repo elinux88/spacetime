@@ -1,8 +1,10 @@
 package site.elioplasma.ecook.spacetimeeventreminder;
 
 import android.app.Activity;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -36,10 +38,11 @@ public class EventFragment extends Fragment {
     private static final String ARG_EVENT_ID = "event_id";
     private static final String DIALOG_DATE = "DialogDate";
     private static final String DIALOG_TIME = "DialogTime";
-    private static final String KEY_REMINDER = "reminder";
+    private static final String DIALOG_SEARCH_TERM = "DialogSearchTerm";
 
     private static final int REQUEST_DATE = 0;
     private static final int REQUEST_TIME = 1;
+    private static final int REQUEST_SEARCH_TERM = 2;
 
     private Event mEvent;
     private TextView mTitleTextView;
@@ -114,7 +117,6 @@ public class EventFragment extends Fragment {
             mTitleTextView = (TextView) v.findViewById(R.id.event_detail_title);
             mTitleTextView.setText(mEvent.getTitle());
         }
-
 
 
         if (mEvent.isCustom()) {
@@ -259,15 +261,34 @@ public class EventFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_event, menu);
 
+        MenuItem deleteItem = menu.findItem(R.id.menu_item_delete_event);
+        MenuItem searchTermItem = menu.findItem(R.id.menu_item_edit_search_term);
+        MenuItem mapItem = menu.findItem(R.id.menu_item_find_on_sky_map);
+
         if (!mEvent.isCustom()) {
-            MenuItem deleteItem = menu.findItem(R.id.menu_item_delete_event);
             deleteItem.setVisible(false);
+            searchTermItem.setVisible(false);
+        }
+
+        boolean hasSearchTerm = mEvent.getSearchTerm() != null;
+        if (hasSearchTerm) {
+            searchTermItem.setTitle(R.string.edit_search_term);
+
+            Intent i = new Intent(Intent.ACTION_SEARCH);
+            i.setPackage("com.google.android.stardroid");
+            PackageManager packageManager = getActivity().getPackageManager();
+            if (packageManager.resolveActivity(i, packageManager.MATCH_DEFAULT_ONLY) == null) {
+                mapItem.setVisible(false);
+            }
+        } else {
+            searchTermItem.setTitle(R.string.add_search_term);
+            mapItem.setVisible(false);
         }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.menu_item_delete_event:
                 if (mEvent.isCustom()) {
                     AlarmService.setAlarmById(getActivity(), false, mEvent.getId());
@@ -277,6 +298,19 @@ public class EventFragment extends Fragment {
                         return false;
                     }
                 }
+                return true;
+            case R.id.menu_item_edit_search_term:
+                FragmentManager manager = getActivity().getSupportFragmentManager();
+                EditSearchTermFragment dialog = EditSearchTermFragment
+                        .newInstance(mEvent.getSearchTerm());
+                dialog.setTargetFragment(EventFragment.this, REQUEST_SEARCH_TERM);
+                dialog.show(manager, DIALOG_SEARCH_TERM);
+                return true;
+            case R.id.menu_item_find_on_sky_map:
+                Intent i = new Intent(Intent.ACTION_SEARCH);
+                i.setPackage("com.google.android.stardroid");
+                i.putExtra(SearchManager.QUERY, mEvent.getSearchTerm());
+                startActivity(i);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -318,6 +352,12 @@ public class EventFragment extends Fragment {
             updateDateTimeButton();
             if (mEvent.isReminderOn()) {
                 AlarmService.setAlarmById(getActivity(), true, mEvent.getId());
+            }
+        } else if (requestCode == REQUEST_SEARCH_TERM) {
+            String searchTerm = data.getStringExtra(EditSearchTermFragment.EXTRA_SEARCH_TERM);
+            if (searchTerm != null) {
+                mEvent.setSearchTerm(searchTerm);
+                getActivity().invalidateOptionsMenu();
             }
         }
     }
