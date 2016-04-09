@@ -3,5 +3,8 @@
     <color name="colorPrimary">#4DB6AC</color>
     <color name="colorPrimaryDark">#00897B</color>
     <color name="colorAccent">#FF9800</color>
+    <color name="colorNightPrimary">#212121</color>
+    <color name="colorNightPrimaryDark">#B71C1C</color>
+    <color name="colorNightAccent">#D50000</color>
     <color name="apptheme_color">#ff9800</color>
 </resources>

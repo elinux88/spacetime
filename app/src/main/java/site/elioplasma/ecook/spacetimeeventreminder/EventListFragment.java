@@ -1,6 +1,8 @@
 package site.elioplasma.ecook.spacetimeeventreminder;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -40,15 +42,23 @@ public class EventListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_main, container, false);
+        View v = inflater.inflate(R.layout.fragment_main, container, false);
 
-        mEventRecyclerView = (RecyclerView) view
+        mEventRecyclerView = (RecyclerView) v
                 .findViewById(R.id.event_recycler_view);
         mEventRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        if (QueryPreferences.getStoredNightMode(getActivity())) {
+            v.findViewById(R.id.event_recycler_view)
+                    .setBackgroundColor(getResources().getColor(R.color.colorNightPrimary));
+        } else {
+            v.findViewById(R.id.event_recycler_view)
+                    .setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+        }
+
         updateUI();
 
-        return view;
+        return v;
     }
 
     @Override
@@ -81,6 +91,13 @@ public class EventListFragment extends Fragment {
             itemFilterByCustom.setTitle(R.string.show_not_custom);
         } else {
             itemFilterByCustom.setTitle(R.string.hide_not_custom);
+        }
+
+        MenuItem itemNightMode = menu.findItem(R.id.menu_item_night_mode);
+        if (QueryPreferences.getStoredNightMode(getActivity())) {
+            itemNightMode.setTitle(R.string.turn_off_night_mode);
+        } else {
+            itemNightMode.setTitle(R.string.turn_on_night_mode);
         }
     }
 
@@ -126,6 +143,16 @@ public class EventListFragment extends Fragment {
                 getActivity().invalidateOptionsMenu();
                 updateUI();
                 return true;
+            case R.id.menu_item_night_mode:
+                boolean nightMode = QueryPreferences.getStoredNightMode(getActivity());
+                if (nightMode) {
+                    QueryPreferences.setStoredNightMode(getActivity(), false);
+                } else {
+                    QueryPreferences.setStoredNightMode(getActivity(), true);
+                }
+                getActivity().invalidateOptionsMenu();
+                updateUI();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -162,6 +189,13 @@ public class EventListFragment extends Fragment {
                     itemView.findViewById(R.id.list_item_event_date_text_view);
             mReminderOnTextView = (TextView)
                     itemView.findViewById(R.id.list_item_event_reminder_on_text_view);
+
+            if (QueryPreferences.getStoredNightMode(getActivity())) {
+                itemView.findViewById(R.id.list_item_layout)
+                        .setBackgroundColor(getResources().getColor(android.R.color.black));
+                mTitleTextView.setTextColor(getResources().getColor(R.color.colorNightPrimaryDark));
+                mDateTextView.setTextColor(getResources().getColor(R.color.colorNightPrimaryDark));
+            }
         }
 
         public void bindEvent(Event event) {
@@ -170,6 +204,10 @@ public class EventListFragment extends Fragment {
             SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy - h:mm a");
             mDateTextView.setText(sdf.format(mEvent.getDate()));
             if (mEvent.isReminderOn()) {
+                if (QueryPreferences.getStoredNightMode(getActivity())) {
+                    mReminderOnTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+                            R.drawable.ic_reminder_night, 0);
+                }
                 mReminderOnTextView.setVisibility(View.VISIBLE);
             } else {
                 mReminderOnTextView.setVisibility(View.INVISIBLE);

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
+    android:id="@+id/fragment_event_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,7 +11,7 @@
     >
 
     <LinearLayout
-        android:id="@+id/event_detail_custom_top_box"
+        android:id="@+id/event_detail_top_box"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -69,7 +70,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/event_detail_custom_bottom_box"
+        android:id="@+id/event_detail_bottom_box"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/event_detail_top_box"
@@ -84,7 +85,7 @@
         >
 
         <TextView
-            android:id="@+id/event_detail_custom_reminder_label"
+            android:id="@+id/event_detail_reminder_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
@@ -100,7 +101,7 @@
             >
 
             <Spinner
-                android:id="@+id/event_detail_custom_time_amount_spinner"
+                android:id="@+id/event_detail_time_amount_spinner"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -108,7 +109,7 @@
                 />
 
             <Spinner
-                android:id="@+id/event_detail_custom_time_unit_spinner"
+                android:id="@+id/event_detail_time_unit_spinner"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -116,7 +117,7 @@
                 />
 
             <TextView
-                android:id="@+id/event_detail_custom_reminder"
+                android:id="@+id/event_detail_reminder"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -128,7 +129,7 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/event_detail_custom_reminder_button"
+            android:id="@+id/event_detail_reminder_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/activity_vertical_margin"

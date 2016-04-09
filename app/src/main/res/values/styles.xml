@@ -18,6 +18,27 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
+    <!-- Night Mode theme. -->
+    <style name="AppNightTheme" parent="Theme.AppCompat">
+        <item name="colorPrimary">@color/colorNightPrimary</item>
+        <item name="colorPrimaryDark">@color/colorNightPrimaryDark</item>
+        <item name="colorAccent">@color/colorNightAccent</item>
+        <item name="android:imageButtonStyle">@style/ImageButtonAppTheme</item>
+        <item name="android:textColorPrimary">@color/colorNightPrimaryDark</item>
+        <item name="android:colorForeground">@color/colorNightPrimaryDark</item>
+        <item name="android:textColorSecondary">@color/colorNightPrimaryDark</item>
+    </style>
+
+    <style name="AppNightTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppNightTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+    <style name="AppNightTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
+    <!-- Theme for Reminder Button -->
     <style name="ImageButtonAppTheme" parent="android:Widget.ImageButton">
         <item name="android:background">@drawable/apptheme_btn_default_holo_light</item>
     </style>

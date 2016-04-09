@@ -5,6 +5,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -176,11 +177,7 @@ public class EventFragment extends Fragment {
             mDescriptionTextView.setText(mEvent.getDescription());
         }
 
-        if (mEvent.isCustom()) {
-            mReminderAmountSpinner = (Spinner) v.findViewById(R.id.event_detail_custom_time_amount_spinner);
-        } else {
-            mReminderAmountSpinner = (Spinner) v.findViewById(R.id.event_detail_time_amount_spinner);
-        }
+        mReminderAmountSpinner = (Spinner) v.findViewById(R.id.event_detail_time_amount_spinner);
         List<String> amounts = new ArrayList<String>();
         for (int i = 0; i < 60; i++) {
             amounts.add(Integer.toString(i));
@@ -210,11 +207,7 @@ public class EventFragment extends Fragment {
             }
         });
 
-        if (mEvent.isCustom()) {
-            mReminderUnitSpinner = (Spinner) v.findViewById(R.id.event_detail_custom_time_unit_spinner);
-        } else {
-            mReminderUnitSpinner = (Spinner) v.findViewById(R.id.event_detail_time_unit_spinner);
-        }
+        mReminderUnitSpinner = (Spinner) v.findViewById(R.id.event_detail_time_unit_spinner);
         ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.time_type_array, android.R.layout.simple_spinner_item);
         typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -237,11 +230,7 @@ public class EventFragment extends Fragment {
             }
         });
 
-        if (mEvent.isCustom()) {
-            mReminderButton = (Button) v.findViewById(R.id.event_detail_custom_reminder_button);
-        } else {
-            mReminderButton = (Button) v.findViewById(R.id.event_detail_reminder_button);
-        }
+        mReminderButton = (Button) v.findViewById(R.id.event_detail_reminder_button);
         updateReminderButton();
         mReminderButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -252,6 +241,31 @@ public class EventFragment extends Fragment {
                 updateReminderButton();
             }
         });
+
+        if (QueryPreferences.getStoredNightMode(getActivity())) {
+            v.findViewById(R.id.fragment_event_layout)
+                    .setBackgroundColor(getResources().getColor(R.color.colorNightPrimary));
+            v.findViewById(R.id.event_detail_top_box)
+                    .setBackgroundColor(getResources().getColor(android.R.color.black));
+            v.findViewById(R.id.event_detail_bottom_box)
+                    .setBackgroundColor(getResources().getColor(android.R.color.black));
+
+            TextView reminderLabel = (TextView) v.findViewById(R.id.event_detail_reminder_label);
+            reminderLabel.setTextColor(getResources().getColor(R.color.colorNightPrimaryDark));
+            TextView reminder = (TextView) v.findViewById(R.id.event_detail_reminder);
+            reminder.setTextColor(getResources().getColor(R.color.colorNightPrimaryDark));
+
+            if (mEvent.isCustom()) {
+                mTitleEditText.setTextColor(getResources().getColor(R.color.colorNightPrimaryDark));
+                mDateButton.setBackgroundColor(getResources().getColor(R.color.colorNightPrimary));
+                mTimeButton.setBackgroundColor(getResources().getColor(R.color.colorNightPrimary));
+                mDescriptionEditText.setTextColor(getResources().getColor(R.color.colorNightPrimaryDark));
+            } else {
+                mTitleTextView.setTextColor(getResources().getColor(R.color.colorNightPrimaryDark));
+                mDateTextView.setTextColor(getResources().getColor(R.color.colorNightPrimaryDark));
+                mDescriptionTextView.setTextColor(getResources().getColor(R.color.colorNightPrimaryDark));
+            }
+        }
 
         return v;
     }
@@ -264,6 +278,10 @@ public class EventFragment extends Fragment {
         MenuItem deleteItem = menu.findItem(R.id.menu_item_delete_event);
         MenuItem searchTermItem = menu.findItem(R.id.menu_item_edit_search_term);
         MenuItem mapItem = menu.findItem(R.id.menu_item_find_on_sky_map);
+
+        if (QueryPreferences.getStoredNightMode(getActivity())) {
+            deleteItem.setIcon(R.drawable.ic_menu_delete_night);
+        }
 
         if (!mEvent.isCustom()) {
             deleteItem.setVisible(false);

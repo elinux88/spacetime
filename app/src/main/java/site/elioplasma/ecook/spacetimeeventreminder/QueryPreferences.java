@@ -10,6 +10,7 @@ public class QueryPreferences {
     private static final String PREF_REMINDERS_ENABLED = "remindersEnabled";
     private static final String PREF_FILTER_BY_REMINDERS = "filterByReminders";
     private static final String PREF_FILTER_BY_CUSTOM = "filterByCustom";
+    private static final String PREF_NIGHT_MODE = "nightMode";
 
     public static boolean getStoredRemindersEnabled(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
@@ -44,6 +45,18 @@ public class QueryPreferences {
         PreferenceManager.getDefaultSharedPreferences(context)
                 .edit()
                 .putBoolean(PREF_FILTER_BY_CUSTOM, filterByCustom)
+                .apply();
+    }
+
+    public static boolean getStoredNightMode(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(PREF_NIGHT_MODE, false);
+    }
+
+    public static void setStoredNightMode(Context context, boolean filterByCustom) {
+        PreferenceManager.getDefaultSharedPreferences(context)
+                .edit()
+                .putBoolean(PREF_NIGHT_MODE, filterByCustom)
                 .apply();
     }
 }

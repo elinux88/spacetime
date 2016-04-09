@@ -10,6 +10,13 @@ public class EventListActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        if (QueryPreferences.getStoredNightMode(this)) {
+            setTheme(R.style.AppNightTheme_NoActionBar);
+        } else {
+            setTheme(R.style.AppTheme_NoActionBar);
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

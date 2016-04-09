@@ -15,6 +15,13 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        if (QueryPreferences.getStoredNightMode(this)) {
+            setTheme(R.style.AppNightTheme);
+        } else {
+            setTheme(R.style.AppTheme);
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fragment);
 
