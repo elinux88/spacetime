@@ -10,6 +10,7 @@ import android.content.res.Resources;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.NotificationCompat;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,9 +32,14 @@ public class AlarmService extends IntentService {
         return new Intent(context, AlarmService.class);
     }
 
-    public static void initAlarmService() {
+    public static void initAlarmService(Context context) {
         if (sEventIds == null) {
             sEventIds = new ArrayList<>();
+            List<Event> reminderEvents = EventData.get(context).getEventsWithReminders();
+
+            for (Event event : reminderEvents) {
+                sEventIds.add(event.getId());
+            }
         }
     }
 
@@ -83,6 +89,7 @@ public class AlarmService extends IntentService {
         if (isOn) {
             Event event = EventData.get(context).getEvent(id);
             Date date = event.getReminderDate();
+            Log.i(TAG, "Reminder Date: " + date);
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(date);
             alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pi);

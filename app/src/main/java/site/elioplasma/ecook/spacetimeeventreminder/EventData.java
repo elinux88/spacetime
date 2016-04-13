@@ -59,6 +59,25 @@ public class EventData {
         return true;
     }
 
+    public List<Event> getEventsWithReminders() {
+        List<Event> events = new ArrayList<>();
+
+        EventCursorWrapper cursor;
+        cursor = queryEventsWithInt(EventTable.Cols.REMINDER_ON + " = 1");
+
+        try {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                events.add(cursor.getEvent());
+                cursor.moveToNext();
+            }
+        } finally {
+            cursor.close();
+        }
+
+        return events;
+    }
+
     public List<Event> getEvents(Context context) {
         List<Event> events = new ArrayList<>();
 

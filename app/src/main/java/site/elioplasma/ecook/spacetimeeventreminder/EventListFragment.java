@@ -30,7 +30,7 @@ public class EventListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        AlarmService.initAlarmService();
+        AlarmService.initAlarmService(getActivity());
         if (QueryPreferences.getStoredRemindersEnabled(getActivity())) {
             AlarmService.setAlarmAll(getActivity(), false);
         } else {
