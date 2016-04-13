@@ -149,8 +149,7 @@ public class EventListFragment extends Fragment {
                 } else {
                     QueryPreferences.setStoredNightMode(getActivity(), true);
                 }
-                getActivity().invalidateOptionsMenu();
-                updateUI();
+                getActivity().recreate();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
