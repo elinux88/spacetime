@@ -181,33 +181,58 @@ public class EventData {
     }
 
     private void initEvents() {
+        // Event data obtained from in-the-sky.org Astronomical Calendar
         String[] eventNames = {
-                "Total Solar Eclipse",
-                "Penumbra Lunar Eclipse",
-                "Lyrid Meteor Shower",
-                "Mars closest to Earth",
-                "Ophiuchid Meteor Shower",
+                "η–Aquarid meteor shower",
+                "Transit of Mercury",
+                "α–Scorpiid meteor shower",
+                "Conjunction between the Moon and Jupiter",
+                "Conjunction between the Moon and Saturn",
+                "Mars at perigee",
+                "Conjunction between the Moon and Uranus",
+                "The Moon at perigee",
+                "Ophiuchid meteor shower",
+                "Conjunction between the Moon and Jupiter",
+                "Annular solar eclipse",
         };
         Date[] eventDates = {
-                new GregorianCalendar(2016, 3, 9).getTime(),
-                new GregorianCalendar(2016, 3, 23).getTime(),
-                new GregorianCalendar(2016, 4, 23).getTime(),
-                new GregorianCalendar(2016, 5, 30).getTime(),
-                new GregorianCalendar(2016, 6, 20).getTime(),
+                new GregorianCalendar(2016, 4, 6).getTime(),
+                new GregorianCalendar(2016, 4, 9, 9, 6, 0).getTime(),
+                new GregorianCalendar(2016, 4, 12).getTime(),
+                new GregorianCalendar(2016, 4, 15, 2, 23, 0).getTime(),
+                new GregorianCalendar(2016, 4, 22, 16, 18, 0).getTime(),
+                new GregorianCalendar(2016, 4, 30, 15, 35, 0).getTime(),
+                new GregorianCalendar(2016, 5, 1, 9, 27, 0).getTime(),
+                new GregorianCalendar(2016, 5, 3, 4, 55, 0).getTime(),
+                new GregorianCalendar(2016, 5, 10).getTime(),
+                new GregorianCalendar(2016, 5, 11, 12, 45, 0).getTime(),
+                new GregorianCalendar(2016, 8, 1, 3, 8, 0).getTime(),
         };
         String[] eventDescriptions = {
-                "Visible in Northern Pacific, Southern Asia, Northern Australia",
+                "The η–Aquarid meteor shower will reach its maximum rate of activity on 6 May 2016. Some shooting stars associated with the shower are expected to be visible each night from 24 Apr to 20 May.",
                 "...",
-                "...",
-                "...",
-                "...",
+                "The α–Scorpiid meteor shower will reach its maximum rate of activity on 13 May 2016. Some shooting stars associated with the shower are expected to be visible each night from 20 Apr to 19 May.",
+                "The Moon and Jupiter will make a close approach, passing within 1°54' of each other.",
+                "The Moon and Saturn will make a close approach, passing within 3°11' of each other.",
+                "Mars's orbit around the Sun will carry it to its closest point to the Earth.",
+                "The Moon and Uranus will make a close approach, passing within 2°18' of each other.",
+                "The Moon will reach the closest point along its orbit to the Earth, and as a result will appear slightly larger than at other times.",
+                "The Ophiuchid meteor shower will reach its maximum rate of activity on 10 June 2016. Some shooting stars associated with the shower are expected to be visible each night from 19 May to Jul.",
+                "The Moon and Jupiter will make a close approach, passing within 1°25' of each other.",
+                "There will be a total solar eclipse, best seen from southern Africa.",
         };
         String[] eventSearchTerms = {
-                "sun",
-                "moon",
-                "lyrid",
+                "aquarius",
+                "mercury",
+                "scorpius",
+                "jupiter",
+                "saturn",
                 "mars",
-                "ophiuchid",
+                "uranus",
+                "moon",
+                "sagitarrius",
+                "jupiter",
+                "sun",
         };
         for (int i = 0; i < eventNames.length; i++) {
             Event event = new Event();
