@@ -30,12 +30,7 @@ public class EventListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        AlarmService.initAlarmService(getActivity());
-        if (QueryPreferences.getStoredRemindersEnabled(getActivity())) {
-            AlarmService.setAlarmAll(getActivity(), false);
-        } else {
-            AlarmService.setAlarmAll(getActivity(), true);
-        }
+        AlarmService.populateAlarms(getActivity());
     }
 
     @Override
@@ -71,12 +66,14 @@ public class EventListFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_event_list, menu);
 
+        /*
         MenuItem itemToggleAllReminders = menu.findItem(R.id.menu_item_toggle_all_reminders);
         if (QueryPreferences.getStoredRemindersEnabled(getActivity())) {
             itemToggleAllReminders.setTitle(R.string.pause_all_reminders);
         } else {
             itemToggleAllReminders.setTitle(R.string.resume_all_reminders);
         }
+        */
 
         MenuItem itemFilterByReminder = menu.findItem(R.id.menu_item_filter_by_reminder);
         if (QueryPreferences.getStoredFilterByReminders(getActivity())) {
@@ -111,6 +108,7 @@ public class EventListFragment extends Fragment {
                         .newIntent(getActivity(), event.getId());
                 startActivity(intent);
                 return true;
+            /*
             case R.id.menu_item_toggle_all_reminders:
                 boolean alarmsAreEnabled = QueryPreferences.getStoredRemindersEnabled(getActivity());
                 if (alarmsAreEnabled) {
@@ -122,6 +120,7 @@ public class EventListFragment extends Fragment {
                 }
                 getActivity().invalidateOptionsMenu();
                 return true;
+                */
             case R.id.menu_item_filter_by_reminder:
                 boolean filterByReminder = QueryPreferences.getStoredFilterByReminders(getActivity());
                 if (filterByReminder) {

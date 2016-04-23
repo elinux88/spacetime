@@ -12,9 +12,9 @@ import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,78 +26,67 @@ public class AlarmService extends IntentService {
     private static final String TAG = "AlarmService";
     private static final String EXTRA_EVENT_ID = "event_id";
     private static final String EXTRA_REMINDER_TEXT = "reminder_title";
-    private static List<UUID> sEventIds;
+    private static AlarmManager sAlarmManager;
+    private static HashMap<UUID, PendingIntent> sUUIDPendingIntentMap;
 
     public static Intent newIntent(Context context) {
         return new Intent(context, AlarmService.class);
     }
 
-    public static void initAlarmService(Context context) {
-        if (sEventIds == null) {
-            sEventIds = new ArrayList<>();
-            List<Event> reminderEvents = EventData.get(context).getEventsWithReminders();
-
-            for (Event event : reminderEvents) {
-                sEventIds.add(event.getId());
-            }
+    public static void populateAlarms(Context context) {
+        if (sAlarmManager == null) {
+            sAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         }
+        if (sUUIDPendingIntentMap == null) {
+            sUUIDPendingIntentMap = new HashMap<>();
+        }
+        List<Event> reminderEvents = EventData.get(context).getEventsWithReminders();
+
+        for (Event event : reminderEvents) {
+            UUID id = event.getId();
+            long millis = getReminderInMillis(event);
+            PendingIntent pi = newEventPendingIntent(context, event);
+
+            sUUIDPendingIntentMap.put(id, pi);
+            sAlarmManager.set(AlarmManager.RTC_WAKEUP, millis, pi);
+        }
+
     }
 
-    public static void setAlarmAll(Context context, boolean isOn) {
-        for (UUID id : sEventIds) {
-            String title = EventData.get(context).getEvent(id).getTitle();
-            Intent intent = AlarmService.newIntent(context);
-            intent.putExtra(EXTRA_EVENT_ID, id);
-            intent.putExtra(EXTRA_REMINDER_TEXT, title);
-            PendingIntent pi = PendingIntent.getService(context, id.hashCode(), intent, 0);
-
-            AlarmManager alarmManager = (AlarmManager)
-                    context.getSystemService(Context.ALARM_SERVICE);
-
-            if (isOn) {
-                Event event = EventData.get(context).getEvent(id);
-                Date date = event.getReminderDate();
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(date);
-                alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pi);
-            } else {
-                alarmManager.cancel(pi);
+    public static void updateAlarm(Context context, UUID id) {
+        PendingIntent pi = sUUIDPendingIntentMap.get(id);
+        Event event = EventData.get(context).getEvent(id);
+        if (event.isReminderOn()) {
+            long millis = getReminderInMillis(event);
+            pi = newEventPendingIntent(context, event);
+            sAlarmManager.set(AlarmManager.RTC_WAKEUP, millis, pi);
+        } else {
+            sAlarmManager.cancel(pi);
+            if (pi != null) {
                 pi.cancel();
             }
+            sUUIDPendingIntentMap.remove(id);
         }
     }
 
-    public static void setAlarmById(Context context, boolean isOn, UUID id) {
-        if (sEventIds == null) {
-            sEventIds = new ArrayList<>();
-        }
-        if (isOn) {
-            sEventIds.add(id);
-            if (!QueryPreferences.getStoredRemindersEnabled(context)) {
-                return;
-            }
-        }
+    private static PendingIntent newEventPendingIntent(Context context, Event event) {
+        UUID id = event.getId();
         String title = EventData.get(context).getEvent(id).getTitle();
+
         Intent intent = AlarmService.newIntent(context);
         intent.putExtra(EXTRA_EVENT_ID, id);
         intent.putExtra(EXTRA_REMINDER_TEXT, title);
-        PendingIntent pi = PendingIntent.getService(context, id.hashCode(), intent, 0);
+        PendingIntent pi = PendingIntent.getService(context,
+                id.hashCode(), intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
-        AlarmManager alarmManager = (AlarmManager)
-                context.getSystemService(Context.ALARM_SERVICE);
+        return pi;
+    }
 
-        if (isOn) {
-            Event event = EventData.get(context).getEvent(id);
-            Date date = event.getReminderDate();
-            Log.i(TAG, "Reminder Date: " + date);
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(date);
-            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pi);
-        } else {
-            alarmManager.cancel(pi);
-            pi.cancel();
-            sEventIds.remove(id);
-        }
+    private static long getReminderInMillis(Event event) {
+        Date date = event.getReminderDate();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        return calendar.getTimeInMillis();
     }
 
     public AlarmService() {

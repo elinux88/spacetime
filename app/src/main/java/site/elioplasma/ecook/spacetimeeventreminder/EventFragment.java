@@ -196,9 +196,6 @@ public class EventFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 int amount = Integer.parseInt(parent.getItemAtPosition(position).toString());
                 mEvent.setReminderTimeAmount(amount);
-                if (mEvent.isReminderOn()) {
-                    AlarmService.setAlarmById(getActivity(), true, mEvent.getId());
-                }
             }
 
             @Override
@@ -219,9 +216,6 @@ public class EventFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mEvent.setReminderTimeUnit(position);
-                if (mEvent.isReminderOn()) {
-                    AlarmService.setAlarmById(getActivity(), true, mEvent.getId());
-                }
             }
 
             @Override
@@ -236,7 +230,6 @@ public class EventFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 boolean toggle = !mEvent.isReminderOn();
-                AlarmService.setAlarmById(getActivity(), toggle, mEvent.getId());
                 mEvent.setReminderOn(toggle);
                 updateReminderButton();
             }
@@ -309,7 +302,11 @@ public class EventFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.menu_item_delete_event:
                 if (mEvent.isCustom()) {
-                    AlarmService.setAlarmById(getActivity(), false, mEvent.getId());
+                    if (mEvent.isReminderOn()) {
+                        mEvent.setReminderOn(false);
+                        EventData.get(getActivity()).updateEvent(mEvent);
+                        AlarmService.updateAlarm(getActivity(), mEvent.getId());
+                    }
                     if (EventData.get(getActivity()).deleteEvent(mEvent.getId())) {
                         getActivity().finish();
                     } else {
@@ -341,6 +338,8 @@ public class EventFragment extends Fragment {
 
         EventData.get(getActivity())
                 .updateEvent(mEvent);
+
+        AlarmService.updateAlarm(getActivity(), mEvent.getId());
     }
 
     @Override
@@ -360,17 +359,11 @@ public class EventFragment extends Fragment {
                     .getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mEvent.setDate(date);
             updateDateTimeButton();
-            if (mEvent.isReminderOn()) {
-                AlarmService.setAlarmById(getActivity(), true, mEvent.getId());
-            }
         } else if (requestCode == REQUEST_TIME) {
             Date date = (Date) data
                     .getSerializableExtra(TimePickerFragment.EXTRA_TIME);
             mEvent.setDate(date);
             updateDateTimeButton();
-            if (mEvent.isReminderOn()) {
-                AlarmService.setAlarmById(getActivity(), true, mEvent.getId());
-            }
         } else if (requestCode == REQUEST_SEARCH_TERM) {
             String searchTerm = data.getStringExtra(EditSearchTermFragment.EXTRA_SEARCH_TERM);
             if (searchTerm != null) {
