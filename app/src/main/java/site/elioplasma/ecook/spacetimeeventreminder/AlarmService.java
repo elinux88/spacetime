@@ -13,9 +13,13 @@ import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -40,6 +44,7 @@ public class AlarmService extends IntentService {
         if (sUUIDPendingIntentMap == null) {
             sUUIDPendingIntentMap = new HashMap<>();
         }
+
         List<Event> reminderEvents = EventData.get(context).getEventsWithReminders();
 
         for (Event event : reminderEvents) {
@@ -48,18 +53,39 @@ public class AlarmService extends IntentService {
             PendingIntent pi = newEventPendingIntent(context, event);
 
             sUUIDPendingIntentMap.put(id, pi);
-            sAlarmManager.set(AlarmManager.RTC_WAKEUP, millis, pi);
-        }
 
+            if (QueryPreferences.getStoredRemindersEnabled(context)) {
+                sAlarmManager.set(AlarmManager.RTC_WAKEUP, millis, pi);
+            }
+        }
+    }
+
+    public static void setAllAlarms(Context context, boolean alarmsOn) {
+        Set<Map.Entry<UUID, PendingIntent>> mapSet = sUUIDPendingIntentMap.entrySet();
+        for (Map.Entry entry : mapSet) {
+            UUID id = (UUID) entry.getKey();
+            PendingIntent pi = (PendingIntent) entry.getValue();
+
+            if (alarmsOn) {
+                Event event = EventData.get(context).getEvent(id);
+                long millis = getReminderInMillis(event);
+                sAlarmManager.set(AlarmManager.RTC_WAKEUP, millis, pi);
+            } else {
+                sAlarmManager.cancel(pi);
+            }
+        }
     }
 
     public static void updateAlarm(Context context, UUID id) {
         PendingIntent pi = sUUIDPendingIntentMap.get(id);
         Event event = EventData.get(context).getEvent(id);
+
         if (event.isReminderOn()) {
             long millis = getReminderInMillis(event);
             pi = newEventPendingIntent(context, event);
-            sAlarmManager.set(AlarmManager.RTC_WAKEUP, millis, pi);
+            if (QueryPreferences.getStoredRemindersEnabled(context)) {
+                sAlarmManager.set(AlarmManager.RTC_WAKEUP, millis, pi);
+            }
         } else {
             sAlarmManager.cancel(pi);
             if (pi != null) {
