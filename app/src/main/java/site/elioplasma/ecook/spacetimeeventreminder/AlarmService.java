@@ -80,18 +80,20 @@ public class AlarmService extends IntentService {
         PendingIntent pi = sUUIDPendingIntentMap.get(id);
         Event event = EventData.get(context).getEvent(id);
 
-        if (event.isReminderOn()) {
-            long millis = getReminderInMillis(event);
-            pi = newEventPendingIntent(context, event);
-            if (QueryPreferences.getStoredRemindersEnabled(context)) {
-                sAlarmManager.set(AlarmManager.RTC_WAKEUP, millis, pi);
+        if (event != null) {
+            if (event.isReminderOn()) {
+                long millis = getReminderInMillis(event);
+                pi = newEventPendingIntent(context, event);
+                if (QueryPreferences.getStoredRemindersEnabled(context)) {
+                    sAlarmManager.set(AlarmManager.RTC_WAKEUP, millis, pi);
+                }
+            } else {
+                sAlarmManager.cancel(pi);
+                if (pi != null) {
+                    pi.cancel();
+                }
+                sUUIDPendingIntentMap.remove(id);
             }
-        } else {
-            sAlarmManager.cancel(pi);
-            if (pi != null) {
-                pi.cancel();
-            }
-            sUUIDPendingIntentMap.remove(id);
         }
     }
 

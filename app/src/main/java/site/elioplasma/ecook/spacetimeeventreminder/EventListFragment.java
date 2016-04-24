@@ -23,7 +23,6 @@ public class EventListFragment extends Fragment {
 
     private RecyclerView mEventRecyclerView;
     private EventAdapter mAdapter;
-    private int mItemPosition;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -160,7 +159,7 @@ public class EventListFragment extends Fragment {
             mEventRecyclerView.setAdapter(mAdapter);
         } else {
             mAdapter.setEvents(events);
-            mAdapter.notifyItemChanged(mItemPosition);
+            mAdapter.notifyDataSetChanged();
         }
     }
 
@@ -209,7 +208,6 @@ public class EventListFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            mItemPosition = mEventRecyclerView.getChildAdapterPosition(v);
             Intent intent = EventActivity.newIntent(getActivity(), mEvent.getId());
             startActivity(intent);
         }

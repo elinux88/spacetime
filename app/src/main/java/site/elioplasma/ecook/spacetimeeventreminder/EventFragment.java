@@ -46,6 +46,7 @@ public class EventFragment extends Fragment {
     private static final int REQUEST_SEARCH_TERM = 2;
 
     private Event mEvent;
+    private UUID mEventId;
     private TextView mTitleTextView;
     private TextView mDateTextView;
     private TextView mDescriptionTextView;
@@ -75,9 +76,9 @@ public class EventFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        UUID eventId = (UUID) getArguments().getSerializable(ARG_EVENT_ID);
+        mEventId = (UUID) getArguments().getSerializable(ARG_EVENT_ID);
 
-        mEvent = EventData.get(getActivity()).getEvent(eventId);
+        mEvent = EventData.get(getActivity()).getEvent(mEventId);
         if (mEvent == null) {
             mEvent = new Event();
             mEvent.setCustom(true);
@@ -305,9 +306,9 @@ public class EventFragment extends Fragment {
                     if (mEvent.isReminderOn()) {
                         mEvent.setReminderOn(false);
                         EventData.get(getActivity()).updateEvent(mEvent);
-                        AlarmService.updateAlarm(getActivity(), mEvent.getId());
+                        AlarmService.updateAlarm(getActivity(), mEventId);
                     }
-                    if (EventData.get(getActivity()).deleteEvent(mEvent.getId())) {
+                    if (EventData.get(getActivity()).deleteEvent(mEventId)) {
                         getActivity().finish();
                     } else {
                         return false;
@@ -339,7 +340,7 @@ public class EventFragment extends Fragment {
         EventData.get(getActivity())
                 .updateEvent(mEvent);
 
-        AlarmService.updateAlarm(getActivity(), mEvent.getId());
+        AlarmService.updateAlarm(getActivity(), mEventId);
     }
 
     @Override
