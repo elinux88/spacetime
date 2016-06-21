@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/SpaceTimeEventReminder.iml" filepath="$PROJECT_DIR$/SpaceTimeEventReminder.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SpaceTime.iml" filepath="$PROJECT_DIR$/SpaceTime.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
