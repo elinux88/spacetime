@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "877826326402",
+    "firebase_url": "https://spacetimeeventreminder.firebaseio.com",
+    "project_id": "spacetimeeventreminder",
+    "storage_bucket": "spacetimeeventreminder.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:877826326402:android:8b758ce4885c2026",
+        "android_client_info": {
+          "package_name": "site.elioplasma.ecook.spacetimeeventreminder"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "877826326402-kj5lrmfne3lqm8748qft3u3udd79og7f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBPlFyQsvUi17k35Pi-wSXWq-s6zDbi78M"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
