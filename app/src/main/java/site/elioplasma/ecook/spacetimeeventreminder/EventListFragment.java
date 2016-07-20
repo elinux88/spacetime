@@ -1,10 +1,13 @@
 package site.elioplasma.ecook.spacetimeeventreminder;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,8 +16,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A fragment containing a RecyclerView.
@@ -23,11 +32,21 @@ public class EventListFragment extends Fragment {
 
     private RecyclerView mEventRecyclerView;
     private EventAdapter mAdapter;
+    private FirebaseAuth mAuth;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        mAuth = FirebaseAuth.getInstance();
+        mAuth.signInAnonymously()
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        //Log.d("EventListFragment", mAuth.getCurrentUser().getUid());
+                    }
+                });
 
         AlarmService.populateAlarms(getActivity());
     }
@@ -43,10 +62,12 @@ public class EventListFragment extends Fragment {
 
         if (QueryPreferences.getStoredNightMode(getActivity())) {
             v.findViewById(R.id.event_recycler_view)
-                    .setBackgroundColor(getResources().getColor(R.color.colorNightPrimary));
+                    .setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorNightPrimary));
+                    //.setBackgroundColor(getResources().getColor(R.color.colorNightPrimary));
         } else {
             v.findViewById(R.id.event_recycler_view)
-                    .setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+                    .setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorPrimaryDark));
+                    //.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
         }
 
         updateUI();
@@ -184,16 +205,19 @@ public class EventListFragment extends Fragment {
 
             if (QueryPreferences.getStoredNightMode(getActivity())) {
                 itemView.findViewById(R.id.list_item_layout)
-                        .setBackgroundColor(getResources().getColor(android.R.color.black));
-                mTitleTextView.setTextColor(getResources().getColor(R.color.colorNightPrimaryDark));
-                mDateTextView.setTextColor(getResources().getColor(R.color.colorNightPrimaryDark));
+                        .setBackgroundColor(ContextCompat.getColor(getActivity(), android.R.color.black));
+                        //.setBackgroundColor(getResources().getColor(android.R.color.black));
+                mTitleTextView.setTextColor(ContextCompat.getColor(getActivity(), R.color.colorNightPrimaryDark));
+                //mTitleTextView.setTextColor(getResources().getColor(R.color.colorNightPrimaryDark));
+                mDateTextView.setTextColor(ContextCompat.getColor(getActivity(), R.color.colorNightPrimaryDark));
+                //mDateTextView.setTextColor(getResources().getColor(R.color.colorNightPrimaryDark));
             }
         }
 
         public void bindEvent(Event event) {
             mEvent = event;
             mTitleTextView.setText(mEvent.getTitle());
-            SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy - h:mm a");
+            SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy - h:mm a", Locale.US);
             mDateTextView.setText(sdf.format(mEvent.getDate()));
             if (mEvent.isReminderOn()) {
                 if (QueryPreferences.getStoredNightMode(getActivity())) {
