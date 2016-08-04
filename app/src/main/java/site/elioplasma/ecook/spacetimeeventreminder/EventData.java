@@ -4,11 +4,21 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import site.elioplasma.ecook.spacetimeeventreminder.database.EventBaseHelper;
@@ -23,6 +33,8 @@ public class EventData {
 
     private Context mContext;
     private SQLiteDatabase mDatabase;
+    private FirebaseDatabase mFirebase;
+    private DatabaseReference mEventsRef;
 
     public static EventData get(Context context) {
         if (sEventData == null) {
@@ -44,6 +56,56 @@ public class EventData {
         } finally {
             eventCursor.close();
         }
+    }
+
+    public void updateEventList() {
+        mFirebase = FirebaseDatabase.getInstance();
+        mEventsRef = mFirebase.getReference("events");
+
+        saveToFirebase();
+
+        mEventsRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                FireEvent fireEvent = dataSnapshot.getValue(FireEvent.class);
+                Log.v("EventAdded", fireEvent.getTitle());
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                FireEvent fireEvent = dataSnapshot.getValue(FireEvent.class);
+                Log.v("EventChanged", fireEvent.getTitle());
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                FireEvent fireEvent = dataSnapshot.getValue(FireEvent.class);
+                Log.v("EventRemoved", fireEvent.getTitle());
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+    // Temporary function for setting up initial data
+    private void saveToFirebase() {
+
+        // create a new FireEvent object
+        FireEvent fireEvent = new FireEvent();
+        fireEvent.setTitle("Moon at First Quarter");
+        fireEvent.setDateLong(new GregorianCalendar(2016, 7, 10, 18, 22, 0).getTime().getTime());
+        fireEvent.setDescription("The Moon will reach the midpoint between new moon and full moon.");
+        fireEvent.setSearchTerm("moon");
+
+        String eventId = "4ed1accd-1491-4562-8c6c-664c97dc6a36";
+
+        mEventsRef.child(eventId).setValue(fireEvent);
     }
 
     public void addEvent(Event e) {

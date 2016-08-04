@@ -44,7 +44,7 @@ public class EventListFragment extends Fragment {
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        //Log.d("EventListFragment", mAuth.getCurrentUser().getUid());
+                        EventData.get(getActivity()).updateEventList();
                     }
                 });
 
