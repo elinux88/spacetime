@@ -32,21 +32,22 @@ public class EventListFragment extends Fragment {
 
     private RecyclerView mEventRecyclerView;
     private EventAdapter mAdapter;
-    private FirebaseAuth mAuth;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        mAuth = FirebaseAuth.getInstance();
-        mAuth.signInAnonymously()
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        auth.signInAnonymously()
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         EventData.get(getActivity()).updateEventList();
                     }
                 });
+
+        EventData.get(getActivity()).deleteOldEvents();
 
         AlarmService.populateAlarms(getActivity());
     }
