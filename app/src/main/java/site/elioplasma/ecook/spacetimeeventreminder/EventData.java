@@ -46,6 +46,15 @@ public class EventData {
         mContext = context.getApplicationContext();
         mDatabase = new EventBaseHelper(mContext)
                 .getWritableDatabase();
+
+        EventCursorWrapper eventCursor = queryEvents(null, null);
+        try {
+            if (eventCursor.getCount() == 0) {
+                initEvents();
+            }
+        } finally {
+            eventCursor.close();
+        }
     }
 
     public void updateEventList() {
@@ -58,36 +67,35 @@ public class EventData {
                 UUID id = UUID.fromString(dataSnapshot.getKey());
                 FireEvent fireEvent = dataSnapshot.getValue(FireEvent.class);
 
-                Event event = new Event(id);
-                event.setTitle(fireEvent.getTitle());
-                event.setDate(new Date(fireEvent.getDateLong()));
-                event.setDescription(fireEvent.getDescription());
-                event.setSearchTerm(fireEvent.getSearchTerm());
+                Event event = makeEventFromFireEvent(id, fireEvent);
 
                 Event existingEvent = getEvent(id);
                 if (existingEvent == null) {
                     addEvent(event);
-                    Log.v("onChildAdded", fireEvent.getTitle());
                 } else {
                     // Compare new and existing events
-                    if (!event.getTitle().equals(existingEvent.getTitle())) {
-                        // update existing events title
+                    if (!event.getTitle().equals(existingEvent.getTitle())
+                            || !event.getDate().equals(existingEvent.getDate())
+                            || !event.getDescription().equals(existingEvent.getDescription())
+                            || !event.getSearchTerm().equals(existingEvent.getSearchTerm())) {
+                        updateEvent(event);
                     }
-                    // etc...
-                    Log.v("onChildAdded", "Already added (" + fireEvent.getTitle() + ")");
                 }
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                UUID id = UUID.fromString(dataSnapshot.getKey());
                 FireEvent fireEvent = dataSnapshot.getValue(FireEvent.class);
-                Log.v("onChildChanged", fireEvent.getTitle());
+
+                Event event = makeEventFromFireEvent(id, fireEvent);
+                updateEvent(event);
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                FireEvent fireEvent = dataSnapshot.getValue(FireEvent.class);
-                Log.v("onChildRemoved", fireEvent.getTitle());
+                UUID id = UUID.fromString(dataSnapshot.getKey());
+                deleteEvent(id);
             }
 
             @Override
@@ -98,6 +106,16 @@ public class EventData {
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+    }
+
+    private Event makeEventFromFireEvent(UUID id, FireEvent fireEvent) {
+        Event event = new Event(id);
+        event.setTitle(fireEvent.getTitle());
+        event.setDate(new Date(fireEvent.getDateLong()));
+        event.setDescription(fireEvent.getDescription());
+        event.setSearchTerm(fireEvent.getSearchTerm());
+
+        return event;
     }
 
     public void deleteOldEvents() {
@@ -247,5 +265,15 @@ public class EventData {
         );
 
         return new EventCursorWrapper(cursor);
+    }
+
+    private void initEvents() {
+        Event event = new Event();
+        event.setTitle("Custom Event");
+        event.setDate(new Date());
+        event.setDescription("This is an example of a custom event. It can be deleted.");
+        event.setSearchTerm("sun");
+        event.setCustom(true);
+        addEvent(event);
     }
 }
