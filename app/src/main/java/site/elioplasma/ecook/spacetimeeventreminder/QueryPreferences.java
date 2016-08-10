@@ -11,6 +11,7 @@ public class QueryPreferences {
     private static final String PREF_FILTER_BY_REMINDERS = "filterByReminders";
     private static final String PREF_FILTER_BY_CUSTOM = "filterByCustom";
     private static final String PREF_NIGHT_MODE = "nightMode";
+    private static final String PREF_DATE_UPDATED = "dateUpdated";
 
     public static boolean getStoredRemindersEnabled(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
@@ -53,10 +54,22 @@ public class QueryPreferences {
                 .getBoolean(PREF_NIGHT_MODE, false);
     }
 
-    public static void setStoredNightMode(Context context, boolean filterByCustom) {
+    public static void setStoredNightMode(Context context, boolean nightMode) {
         PreferenceManager.getDefaultSharedPreferences(context)
                 .edit()
-                .putBoolean(PREF_NIGHT_MODE, filterByCustom)
+                .putBoolean(PREF_NIGHT_MODE, nightMode)
+                .apply();
+    }
+
+    public static long getStoredDateUpdated(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getLong(PREF_DATE_UPDATED, 0);
+    }
+
+    public static void setStoredDateUpdated(Context context, long dateUpdated) {
+        PreferenceManager.getDefaultSharedPreferences(context)
+                .edit()
+                .putLong(PREF_DATE_UPDATED, dateUpdated)
                 .apply();
     }
 }

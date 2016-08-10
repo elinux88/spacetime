@@ -29,6 +29,7 @@
     <string name="search_term_for_sky_map">Search Term For Sky Map</string>
     <string name="turn_on_night_mode">Turn On Night Mode</string>
     <string name="turn_off_night_mode">Turn Off Night Mode</string>
+    <string name="updating_event_list">Updating event list</string>
     <string-array name="time_type_array">
         <item>Minute</item>
         <item>Hour</item>

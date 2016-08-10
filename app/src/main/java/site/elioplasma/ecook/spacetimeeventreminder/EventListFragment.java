@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -22,6 +23,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -38,16 +41,27 @@ public class EventListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        auth.signInAnonymously()
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        EventData.get(getActivity()).updateEventList();
-                    }
-                });
+        long lastDateUpdated = QueryPreferences.getStoredDateUpdated(getActivity());
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DATE, -1);
+        long currentTimeYesterday = cal.getTimeInMillis();
 
-        EventData.get(getActivity()).deleteOldEvents();
+        if (lastDateUpdated < currentTimeYesterday) {
+            FirebaseAuth auth = FirebaseAuth.getInstance();
+            auth.signInAnonymously()
+                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            EventData.get(getActivity()).updateEventList();
+                            Toast.makeText(getActivity(), R.string.updating_event_list, Toast.LENGTH_LONG)
+                                    .show();
+                        }
+                    });
+
+            EventData.get(getActivity()).deleteOldEvents();
+            QueryPreferences.setStoredDateUpdated(getActivity(), new Date().getTime());
+        }
 
         AlarmService.populateAlarms(getActivity());
     }

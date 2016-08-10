@@ -124,10 +124,10 @@ public class EventData {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         cal.add(Calendar.DATE, -1);
-        long currentTime = cal.getTimeInMillis();
+        long currentTimeYesterday = cal.getTimeInMillis();
 
         for (Event event : events) {
-            if (event.getDate().getTime() < currentTime) {
+            if (event.getDate().getTime() < currentTimeYesterday) {
                 deleteEvent(event.getId());
             }
         }
