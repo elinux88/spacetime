@@ -2,14 +2,13 @@ package site.elioplasma.ecook.spacetimeeventreminder;
 
 import android.app.Activity;
 import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -29,10 +28,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 /**
  * Created by eli on 2/29/16.
+ * Updated by eli on 8/17/16.
  */
 public class EventFragment extends Fragment {
 
@@ -54,13 +55,7 @@ public class EventFragment extends Fragment {
     private Button mDateButton;
     private Button mTimeButton;
     private EditText mDescriptionEditText;
-    private Spinner mReminderAmountSpinner;
-    private Spinner mReminderUnitSpinner;
     private Button mReminderButton;
-
-    public static Intent newIntent(Context context) {
-        return new Intent(context, EventFragment.class);
-    }
 
     public static EventFragment newInstance(UUID eventId) {
         Bundle args = new Bundle();
@@ -150,7 +145,7 @@ public class EventFragment extends Fragment {
 
         } else {
             mDateTextView = (TextView) v.findViewById(R.id.event_detail_date);
-            SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy - h:mm a");
+            SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy - h:mm a", Locale.US);
             mDateTextView.setText(sdf.format(mEvent.getDate()));
         }
 
@@ -178,21 +173,21 @@ public class EventFragment extends Fragment {
             mDescriptionTextView.setText(mEvent.getDescription());
         }
 
-        mReminderAmountSpinner = (Spinner) v.findViewById(R.id.event_detail_time_amount_spinner);
-        List<String> amounts = new ArrayList<String>();
+        Spinner reminderAmountSpinner = (Spinner) v.findViewById(R.id.event_detail_time_amount_spinner);
+        List<String> amounts = new ArrayList<>();
         for (int i = 0; i < 60; i++) {
             amounts.add(Integer.toString(i));
         }
-        ArrayAdapter<String> amountAdapter = new ArrayAdapter<String>(getActivity(),
+        ArrayAdapter<String> amountAdapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_spinner_item, amounts);
         amountAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mReminderAmountSpinner.setAdapter(amountAdapter);
+        reminderAmountSpinner.setAdapter(amountAdapter);
 
         String reminderAmount = Integer.toString(mEvent.getReminderTimeAmount());
         int amountSpinnerPosition = amountAdapter.getPosition(reminderAmount);
-        mReminderAmountSpinner.setSelection(amountSpinnerPosition);
+        reminderAmountSpinner.setSelection(amountSpinnerPosition);
 
-        mReminderAmountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        reminderAmountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 int amount = Integer.parseInt(parent.getItemAtPosition(position).toString());
@@ -205,15 +200,15 @@ public class EventFragment extends Fragment {
             }
         });
 
-        mReminderUnitSpinner = (Spinner) v.findViewById(R.id.event_detail_time_unit_spinner);
+        Spinner reminderUnitSpinner = (Spinner) v.findViewById(R.id.event_detail_time_unit_spinner);
         ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.time_type_array, android.R.layout.simple_spinner_item);
         typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mReminderUnitSpinner.setAdapter(typeAdapter);
+        reminderUnitSpinner.setAdapter(typeAdapter);
 
-        mReminderUnitSpinner.setSelection(mEvent.getReminderTimeUnit());
+        reminderUnitSpinner.setSelection(mEvent.getReminderTimeUnit());
 
-        mReminderUnitSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        reminderUnitSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mEvent.setReminderTimeUnit(position);
@@ -238,26 +233,26 @@ public class EventFragment extends Fragment {
 
         if (QueryPreferences.getStoredNightMode(getActivity())) {
             v.findViewById(R.id.fragment_event_layout)
-                    .setBackgroundColor(getResources().getColor(R.color.colorNightPrimary));
+                    .setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorNightPrimary));
             v.findViewById(R.id.event_detail_top_box)
-                    .setBackgroundColor(getResources().getColor(android.R.color.black));
+                    .setBackgroundColor(ContextCompat.getColor(getActivity(), android.R.color.black));
             v.findViewById(R.id.event_detail_bottom_box)
-                    .setBackgroundColor(getResources().getColor(android.R.color.black));
+                    .setBackgroundColor(ContextCompat.getColor(getActivity(), android.R.color.black));
 
             TextView reminderLabel = (TextView) v.findViewById(R.id.event_detail_reminder_label);
-            reminderLabel.setTextColor(getResources().getColor(R.color.colorNightPrimaryDark));
+            reminderLabel.setTextColor(ContextCompat.getColor(getActivity(), R.color.colorNightPrimaryDark));
             TextView reminder = (TextView) v.findViewById(R.id.event_detail_reminder);
-            reminder.setTextColor(getResources().getColor(R.color.colorNightPrimaryDark));
+            reminder.setTextColor(ContextCompat.getColor(getActivity(), R.color.colorNightPrimaryDark));
 
             if (mEvent.isCustom()) {
-                mTitleEditText.setTextColor(getResources().getColor(R.color.colorNightPrimaryDark));
-                mDateButton.setBackgroundColor(getResources().getColor(R.color.colorNightPrimary));
-                mTimeButton.setBackgroundColor(getResources().getColor(R.color.colorNightPrimary));
-                mDescriptionEditText.setTextColor(getResources().getColor(R.color.colorNightPrimaryDark));
+                mTitleEditText.setTextColor(ContextCompat.getColor(getActivity(), R.color.colorNightPrimaryDark));
+                mDateButton.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorNightPrimary));
+                mTimeButton.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorNightPrimary));
+                mDescriptionEditText.setTextColor(ContextCompat.getColor(getActivity(), R.color.colorNightPrimaryDark));
             } else {
-                mTitleTextView.setTextColor(getResources().getColor(R.color.colorNightPrimaryDark));
-                mDateTextView.setTextColor(getResources().getColor(R.color.colorNightPrimaryDark));
-                mDescriptionTextView.setTextColor(getResources().getColor(R.color.colorNightPrimaryDark));
+                mTitleTextView.setTextColor(ContextCompat.getColor(getActivity(), R.color.colorNightPrimaryDark));
+                mDateTextView.setTextColor(ContextCompat.getColor(getActivity(), R.color.colorNightPrimaryDark));
+                mDescriptionTextView.setTextColor(ContextCompat.getColor(getActivity(), R.color.colorNightPrimaryDark));
             }
         }
 
@@ -289,7 +284,7 @@ public class EventFragment extends Fragment {
             Intent i = new Intent(Intent.ACTION_SEARCH);
             i.setPackage("com.google.android.stardroid");
             PackageManager packageManager = getActivity().getPackageManager();
-            if (packageManager.resolveActivity(i, packageManager.MATCH_DEFAULT_ONLY) == null) {
+            if (packageManager.resolveActivity(i, PackageManager.MATCH_DEFAULT_ONLY) == null) {
                 mapItem.setVisible(false);
             }
         } else {
@@ -377,10 +372,10 @@ public class EventFragment extends Fragment {
     private void updateDateTimeButton() {
         Date date = mEvent.getDate();
 
-        SimpleDateFormat sdfDate = new SimpleDateFormat("dd MMM yyyy");
+        SimpleDateFormat sdfDate = new SimpleDateFormat("dd MMM yyyy", Locale.US);
         mDateButton.setText(sdfDate.format(date));
 
-        SimpleDateFormat sdfTime = new SimpleDateFormat("h:mm a");
+        SimpleDateFormat sdfTime = new SimpleDateFormat("h:mm a", Locale.US);
         mTimeButton.setText(sdfTime.format(date));
     }
 
