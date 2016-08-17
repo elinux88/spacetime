@@ -77,22 +77,24 @@ public class AlarmService extends IntentService {
     }
 
     public static void updateAlarm(Context context, UUID id) {
-        PendingIntent pi = sUUIDPendingIntentMap.get(id);
-        Event event = EventData.get(context).getEvent(id);
+        if (!sUUIDPendingIntentMap.isEmpty()) {
+            PendingIntent pi = sUUIDPendingIntentMap.get(id);
+            Event event = EventData.get(context).getEvent(id);
 
-        if (event != null) {
-            if (event.isReminderOn()) {
-                long millis = getReminderInMillis(event);
-                pi = newEventPendingIntent(context, event);
-                if (QueryPreferences.getStoredRemindersEnabled(context)) {
-                    sAlarmManager.set(AlarmManager.RTC_WAKEUP, millis, pi);
+            if (event != null) {
+                if (event.isReminderOn()) {
+                    long millis = getReminderInMillis(event);
+                    pi = newEventPendingIntent(context, event);
+                    if (QueryPreferences.getStoredRemindersEnabled(context)) {
+                        sAlarmManager.set(AlarmManager.RTC_WAKEUP, millis, pi);
+                    }
+                } else {
+                    sAlarmManager.cancel(pi);
+                    if (pi != null) {
+                        pi.cancel();
+                    }
+                    sUUIDPendingIntentMap.remove(id);
                 }
-            } else {
-                sAlarmManager.cancel(pi);
-                if (pi != null) {
-                    pi.cancel();
-                }
-                sUUIDPendingIntentMap.remove(id);
             }
         }
     }
@@ -104,10 +106,8 @@ public class AlarmService extends IntentService {
         Intent intent = AlarmService.newIntent(context);
         intent.putExtra(EXTRA_EVENT_ID, id);
         intent.putExtra(EXTRA_REMINDER_TEXT, title);
-        PendingIntent pi = PendingIntent.getService(context,
+        return PendingIntent.getService(context,
                 id.hashCode(), intent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-        return pi;
     }
 
     private static long getReminderInMillis(Event event) {
