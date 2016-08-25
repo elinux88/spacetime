@@ -4,22 +4,17 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import site.elioplasma.ecook.spacetimeeventreminder.database.EventBaseHelper;
@@ -28,6 +23,7 @@ import site.elioplasma.ecook.spacetimeeventreminder.database.EventDbSchema.Event
 
 /**
  * Created by eli on 2/27/16.
+ * Updated by eli on 8/25/16.
  */
 public class EventData {
     private static EventData sEventData;
