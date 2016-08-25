@@ -24,6 +24,7 @@ import java.util.UUID;
 
 /**
  * Created by eli on 3/10/16.
+ * Updated by eli on 8/25/16.
  */
 public class AlarmService extends IntentService {
 
@@ -77,7 +78,7 @@ public class AlarmService extends IntentService {
     }
 
     public static void updateAlarm(Context context, UUID id) {
-        if (!sUUIDPendingIntentMap.isEmpty()) {
+        if (sUUIDPendingIntentMap != null) {
             PendingIntent pi = sUUIDPendingIntentMap.get(id);
             Event event = EventData.get(context).getEvent(id);
 
