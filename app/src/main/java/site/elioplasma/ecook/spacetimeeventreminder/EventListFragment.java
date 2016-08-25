@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,7 +28,8 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * A fragment containing a RecyclerView.
+ * Created by eli on 2/29/16.
+ * Updated by eli on 8/25/16.
  */
 public class EventListFragment extends Fragment {
 
@@ -58,10 +58,10 @@ public class EventListFragment extends Fragment {
                                     .show();
                         }
                     });
-
-            EventData.get(getActivity()).deleteOldEvents();
-            QueryPreferences.setStoredDateUpdated(getActivity(), new Date().getTime());
         }
+
+        EventData.get(getActivity()).deleteOldEvents();
+        QueryPreferences.setStoredDateUpdated(getActivity(), new Date().getTime());
 
         AlarmService.populateAlarms(getActivity());
     }
