@@ -22,8 +22,8 @@ import site.elioplasma.ecook.spacetimeeventreminder.database.EventCursorWrapper;
 import site.elioplasma.ecook.spacetimeeventreminder.database.EventDbSchema.EventTable;
 
 /**
- * Created by eli on 2/27/16.
- * Updated by eli on 8/25/16.
+ * Created by eli on 27-Feb-16.
+ * Updated by eli on 05-Sep-16.
  */
 public class EventData {
     private static EventData sEventData;
@@ -67,7 +67,9 @@ public class EventData {
 
                 Event existingEvent = getEvent(id);
                 if (existingEvent == null) {
-                    addEvent(event);
+                    if (event.getDate().getTime() > getTimeYesterday()) {
+                        addEvent(event);
+                    }
                 } else {
                     // Compare new and existing events
                     if (!event.getTitle().equals(existingEvent.getTitle())
@@ -117,16 +119,18 @@ public class EventData {
     public void deleteOldEvents() {
         List<Event> events = getEvents(mContext);
 
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        cal.add(Calendar.DATE, -1);
-        long currentTimeYesterday = cal.getTimeInMillis();
-
         for (Event event : events) {
-            if (event.getDate().getTime() < currentTimeYesterday) {
+            if (event.getDate().getTime() < getTimeYesterday()) {
                 deleteEvent(event.getId());
             }
         }
+    }
+
+    private long getTimeYesterday() {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DATE, -1);
+        return cal.getTimeInMillis();
     }
 
     public void addEvent(Event e) {
